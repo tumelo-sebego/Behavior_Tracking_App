@@ -9,7 +9,7 @@ progress_bp = Blueprint("progress", __name__)
 @jwt_required()
 def get_daily_progress():
     user_email = get_jwt_identity()
-    today = datetime.utcnow().date()
+    today = datetime.combine(datetime.utcnow().date(), datetime.min.time())
 
     tasks = list(mongo.db.tasks.find({"user_email": user_email, "date": {"$gte": today}}))
 
@@ -27,7 +27,7 @@ def get_daily_progress():
 @jwt_required()
 def get_weekly_progress():
     user_email = get_jwt_identity()
-    seven_days_ago = datetime.utcnow().date() - timedelta(days=7)
+    seven_days_ago = datetime.combine(datetime.utcnow().date() - timedelta(days=7), datetime.min.time())
 
     # Fetch tasks from the past 7 days
     tasks = list(mongo.db.tasks.find({"user_email": user_email, "date": {"$gte": seven_days_ago}}))
