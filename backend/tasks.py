@@ -32,7 +32,7 @@ def add_task():
     return jsonify({"message": "Task added successfully!"}), 201
 
 # Get all tasks for the logged-in user
-@app.route("/tasks", methods=["GET"])
+@tasks_bp.route("/tasks", methods=["GET"])
 @jwt_required()
 def get_tasks():
     user_email = get_jwt_identity()
@@ -40,7 +40,7 @@ def get_tasks():
     return jsonify(tasks), 200
 
 # Mark a task as completed
-@app.route("/tasks/<task_title>/complete", methods=["PATCH"])
+@tasks_bp.route("/tasks/<task_title>/complete", methods=["PATCH"])
 @jwt_required()
 def complete_task(task_title):
     user_email = get_jwt_identity()
