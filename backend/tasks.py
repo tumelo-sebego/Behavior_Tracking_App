@@ -30,3 +30,22 @@ def add_task():
     mongo.db.tasks.insert_one(data)
 
     return jsonify({"message": "Task added successfully!"}), 201
+
+# Get all tasks for the logged-in user
+@app.route("/tasks", methods=["GET"])
+@jwt_required()
+def get_tasks():
+    user_email = get_jwt_identity()
+    tasks = list(mongo.db.tasks.find({"user_email": user_email}, {"_id": 0}))
+    return jsonify(tasks), 200
+
+# Mark a task as completed
+@app.route("/tasks/<task_title>/complete", methods=["PATCH"])
+@jwt_required()
+def complete_task(task_title):
+    user_email = get_jwt_identity()
+    mongo.db.tasks.update_one(
+        {"title": task_title, "user_email": user_email}, 
+        {"$set": {"completed": True}}
+    )
+    return jsonify({"message": "Task marked as completed"}), 200
