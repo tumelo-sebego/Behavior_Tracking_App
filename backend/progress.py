@@ -23,7 +23,7 @@ def get_daily_progress():
 
     return jsonify({"progress": progress, "total_points": total_points}), 200
 
-@app.route("/progress/weekly", methods=["GET"])
+@progress_bp.route("/progress/weekly", methods=["GET"])
 @jwt_required()
 def get_weekly_progress():
     user_email = get_jwt_identity()
@@ -40,7 +40,7 @@ def get_weekly_progress():
     return jsonify({"progress": progress, "total_points": total_points}), 200
 
 
-@app.route("/progress/monthly", methods=["GET"])
+@progress_bp.route("/progress/monthly", methods=["GET"])
 @jwt_required()
 def get_monthly_progress():
     user_email = get_jwt_identity()
