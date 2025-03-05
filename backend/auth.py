@@ -17,7 +17,7 @@ def login():
     return jsonify({"access_token": access_token}), 200
 
 # User Registration
-@app.route("/register", methods=["POST"])
+@auth_bp.route("/register", methods=["POST"])
 def register():
     data = request.json
     if mongo.db.users.find_one({"email": data["email"]}):
