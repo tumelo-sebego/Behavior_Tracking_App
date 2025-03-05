@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from database import mongo
-from datetime import datetime
+from datetime import datetime, timedelta
 
 tasks_bp = Blueprint("tasks", __name__)
 
@@ -10,7 +10,7 @@ tasks_bp = Blueprint("tasks", __name__)
 def add_task():
     user_email = get_jwt_identity()
     data = request.json
-    today = datetime.utcnow().date()
+    today = datetime.combine(datetime.utcnow().date(), datetime.min.time())
 
     # Get today's tasks
     tasks = list(mongo.db.tasks.find({"user_email": user_email, "date": {"$gte": today}}))

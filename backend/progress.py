@@ -23,7 +23,7 @@ def get_daily_progress():
 
     return jsonify({"progress": progress, "total_points": total_points}), 200
 
-@progress_bp.route("/progress/weekly", methods=["GET"])
+@app.route("/progress/weekly", methods=["GET"])
 @jwt_required()
 def get_weekly_progress():
     user_email = get_jwt_identity()
@@ -39,19 +39,3 @@ def get_weekly_progress():
 
     return jsonify({"progress": progress, "total_points": total_points}), 200
 
-
-@progress_bp.route("/progress/monthly", methods=["GET"])
-@jwt_required()
-def get_monthly_progress():
-    user_email = get_jwt_identity()
-    thirty_days_ago = datetime.utcnow().date() - timedelta(days=30)
-
-    # Fetch tasks from the past 30 days
-    tasks = list(mongo.db.tasks.find({"user_email": user_email, "date": {"$gte": thirty_days_ago}}))
-
-    total_points = sum(task["points"] for task in tasks)
-    completed_points = sum(task["points"] for task in tasks if task["completed"])
-
-    progress = (completed_points / total_points) * 100 if total_points > 0 else 0
-
-    return jsonify({"progress": progress, "total_points": total_points}), 200
