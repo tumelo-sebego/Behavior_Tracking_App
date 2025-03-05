@@ -15,3 +15,12 @@ def login():
 
     access_token = create_access_token(identity=email)
     return jsonify({"access_token": access_token}), 200
+
+# User Registration
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.json
+    if mongo.db.users.find_one({"email": data["email"]}):
+        return jsonify({"message": "User already exists"}), 400
+    mongo.db.users.insert_one(data)
+    return jsonify({"message": "User registered successfully"}), 201
