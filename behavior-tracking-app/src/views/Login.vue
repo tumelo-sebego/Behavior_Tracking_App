@@ -14,8 +14,9 @@
 </template>
 
 <script>
+import { api } from "../api";
+
 export default {
-  name: "Login",
   data() {
     return {
       email: "",
@@ -23,8 +24,16 @@ export default {
     };
   },
   methods: {
-    login() {
-      console.log("Logging in:", this.email, this.password);
+    async login() {
+      try {
+        const response = await api.post("/auth/login", {
+          email: this.email,
+          password: this.password,
+        });
+        console.log("Login successful", response.data);
+      } catch (error) {
+        console.error("Login failed", error.response.data);
+      }
     },
   },
 };
