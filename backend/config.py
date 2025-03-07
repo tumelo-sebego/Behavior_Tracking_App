@@ -1,12 +1,16 @@
 import os
 from datetime import timedelta
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 class Config:
-    SECRET_KEY = os.getenv("SECRET_KEY", "secret_key")
-    MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/behavior_tracker")
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    MONGO_URI = os.getenv("MONGO_URI")
 
      # 🔑 JWT Configuration
-    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your_jwt_secret_key")
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=7)  # Access tokens expire in 7 days
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)  # Refresh tokens expire in 30 days
 
