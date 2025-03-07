@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 progress_bp = Blueprint("progress", __name__)
 
-@progress_bp.route("/progress/daily", methods=["GET"])
+@progress_bp.route("/daily", methods=["GET"])
 @jwt_required()
 def get_daily_progress():
     user_email = get_jwt_identity()
@@ -23,7 +23,7 @@ def get_daily_progress():
 
     return jsonify({"progress": progress, "total_points": total_points}), 200
 
-@progress_bp.route("/progress/weekly", methods=["GET"])
+@progress_bp.route("/weekly", methods=["GET"])
 @jwt_required()
 def get_weekly_progress():
     user_email = get_jwt_identity()

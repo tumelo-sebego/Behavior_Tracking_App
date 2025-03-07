@@ -20,3 +20,4 @@ app.register_blueprint(progress_bp, url_prefix="/progress")
 
 if __name__ == "__main__":
     app.run(debug=True)
+    
