@@ -1,5 +1,27 @@
 <template>
-  <div v-if="isAuthenticated">
+  <div v-if="!isAuthenticated">
+    <!-- Show Login Form if Not Logged In -->
+    <h2>Login</h2>
+    <form @submit.prevent="login">
+      <input type="email" v-model="email" placeholder="Email" required />
+      <input
+        type="password"
+        v-model="password"
+        placeholder="Password"
+        required />
+      <button type="submit">Login</button>
+    </form>
+    <p><router-link to="/forgot-password">Forgot Password?</router-link></p>
+    <button @click="$router.push('/register')">Register</button>
+  </div>
+
+  <!-- If no tasks, show the "Add New Task" view -->
+  <div v-else-if="tasks.length === 0">
+    <p>You have no tasks for today. Add new tasks to track your progress.</p>
+    <button @click="goToAddTask">Add Task</button>
+  </div>
+
+  <div v-else>
     <!-- Show Daily Tasks if Logged In -->
     <h1>Daily Tasks</h1>
     <ul>
@@ -14,22 +36,6 @@
     </ul>
     <h2>Daily Progress: {{ progress }}%</h2>
     <button @click="logout">Logout</button>
-  </div>
-
-  <div v-else>
-    <!-- Show Login Form if Not Logged In -->
-    <h2>Login</h2>
-    <form @submit.prevent="login">
-      <input type="email" v-model="email" placeholder="Email" required />
-      <input
-        type="password"
-        v-model="password"
-        placeholder="Password"
-        required />
-      <button type="submit">Login</button>
-    </form>
-    <p><router-link to="/forgot-password">Forgot Password?</router-link></p>
-    <button @click="$router.push('/register')">Register</button>
   </div>
 </template>
 

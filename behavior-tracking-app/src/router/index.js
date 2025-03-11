@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
-import AddTask from "@/views/AddTask.vue";
+import AddTask from "@/views/Add-Task.vue";
 
 const routes = [
   { path: "/", component: Home },
