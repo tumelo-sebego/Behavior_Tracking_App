@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { loginUser, getTasks, completeTask, getDailyProgress } from "@/api.js";
+import { login, getTasks, completeTask, getDailyProgress } from "@/api.js";
 
 export default {
   data() {
