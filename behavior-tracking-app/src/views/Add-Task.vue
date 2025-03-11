@@ -48,7 +48,7 @@ export default {
       }
 
       try {
-        await createTask({ name: this.taskName, points: this.points });
+        await createTask(this.tasks);
         this.$router.push("/"); // Redirect back to Home after adding
       } catch (error) {
         console.error("Error adding task:", error);
