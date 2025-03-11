@@ -86,6 +86,9 @@ export default {
       this.isAuthenticated = false;
       this.$router.push("/"); // Stay on Home page
     },
+    goToAddTask() {
+      this.$router.push("/add-task"); // Navigate to Add Task page
+    },
   },
 };
 </script>
