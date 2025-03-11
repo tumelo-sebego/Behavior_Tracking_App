@@ -48,6 +48,16 @@ export async function register(name, email, password) {
 }
 
 // Logout (Remove Token)
-export function logoutUser() {
+export function logout() {
   localStorage.removeItem("token");
 }
+
+export const createTask = async (taskData) => {
+  const token = localStorage.getItem("token");
+  return axios.post(`${API_URL}/tasks`, taskData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
