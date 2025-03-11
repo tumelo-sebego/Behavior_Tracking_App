@@ -11,7 +11,7 @@ function getAuthHeader() {
 }
 
 // User Login
-export async function loginUser(email, password) {
+export async function login(email, password) {
   return axios.post(
     `${API_URL}/auth/login`,
     { email, password },
@@ -39,7 +39,7 @@ export async function getDailyProgress() {
 }
 
 // User Registration
-export async function registerUser(name, email, password) {
+export async function register(name, email, password) {
   return axios.post(
     `${API_URL}/auth/register`,
     { name, email, password },
