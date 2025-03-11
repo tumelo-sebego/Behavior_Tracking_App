@@ -1,17 +1,22 @@
 <template>
-  <div class="add-task">
-    <h1>Add New Task</h1>
-    <form @submit.prevent="addTask">
-      <label for="taskName">Task Name:</label>
-      <input type="text" v-model="taskName" required />
+  <div>
+    <h2>Add Tasks</h2>
 
-      <label for="points">Task Points:</label>
-      <input type="number" v-model="points" min="1" max="100" required />
+    <div v-for="(task, index) in tasks" :key="index">
+      <input v-model="task.title" placeholder="Task Title" />
+      <input v-model.number="task.points" type="number" placeholder="Points" />
+      <button @click="removeTask(index)">Remove</button>
+    </div>
 
-      <button type="submit">Add Task</button>
-    </form>
+    <button @click="addTask">+ Add Another Task</button>
 
-    <router-link to="/">Back to Home</router-link>
+    <p v-if="totalPoints !== 100" style="color: red">
+      Total points must be exactly 100. Current: {{ totalPoints }}
+    </p>
+
+    <button @click="submitTasks" :disabled="totalPoints !== 100">
+      Submit Tasks
+    </button>
   </div>
 </template>
 
