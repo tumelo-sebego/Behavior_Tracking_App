@@ -14,6 +14,8 @@
 </template>
 
 <script>
+import { api } from "../api";
+
 export default {
   name: "Register",
   data() {
@@ -23,8 +25,16 @@ export default {
     };
   },
   methods: {
-    register() {
-      console.log("Registering:", this.email, this.password);
+    async register() {
+      try {
+        const response = await api.post("/auth/register", {
+          email: this.email,
+          password: this.password,
+        });
+        console.log("Registration successful", response.data);
+      } catch (error) {
+        console.error("Registration failed", error.response.data);
+      }
     },
   },
 };
