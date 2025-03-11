@@ -12,7 +12,11 @@ def add_tasks():
     data = request.json  # Expecting an array of tasks
     today = datetime.combine(datetime.utcnow().date(), datetime.min.time())
 
-    new_tasks = data.get("tasks", [])  # Expecting {"tasks": [{title, points}, {title, points}]}
+    # Ensure data is a list
+    if not isinstance(data, list):
+        return jsonify({"message": "Invalid input format. Expected a list of tasks."}), 400
+    
+    new_tasks = data  # Expecting {"tasks": [{title, points}, {title, points}]}
     new_tasks_total = sum(task["points"] for task in new_tasks)
 
     # Validate total points
