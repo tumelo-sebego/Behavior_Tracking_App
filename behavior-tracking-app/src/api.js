@@ -13,7 +13,7 @@ function getAuthHeader() {
 // User Login
 export async function login(email, password) {
   return axios.post(
-    `${API_URL}/auth/login`,
+    `${API_URL}/auth/login/`,
     { email, password },
     { headers: { "Content-Type": "application/json" } },
   );
@@ -21,13 +21,13 @@ export async function login(email, password) {
 
 // Fetch User's Tasks
 export async function getTasks() {
-  return axios.get(`${API_URL}/tasks`, { headers: getAuthHeader() });
+  return axios.get(`${API_URL}/tasks/`, { headers: getAuthHeader() });
 }
 
 // Complete a Task
 export async function completeTask(taskId) {
   return axios.put(
-    `${API_URL}/tasks/${taskId}/complete`,
+    `${API_URL}/tasks/${taskId}/complete/`,
     {},
     { headers: getAuthHeader() },
   );
@@ -35,13 +35,13 @@ export async function completeTask(taskId) {
 
 // Get Daily Progress
 export async function getDailyProgress() {
-  return axios.get(`${API_URL}/progress/daily`, { headers: getAuthHeader() });
+  return axios.get(`${API_URL}/progress/daily/`, { headers: getAuthHeader() });
 }
 
 // User Registration
 export async function register(name, email, password) {
   return axios.post(
-    `${API_URL}/auth/register`,
+    `${API_URL}/auth/register/`,
     { name, email, password },
     { headers: { "Content-Type": "application/json" } },
   );
@@ -53,7 +53,7 @@ export function logout() {
 }
 
 export const createTask = async (taskData) => {
-  return axios.post(`${API_URL}/tasks`, taskData, {
+  return axios.post(`${API_URL}/tasks/`, taskData, {
     headers: getAuthHeader(),
   });
 };
