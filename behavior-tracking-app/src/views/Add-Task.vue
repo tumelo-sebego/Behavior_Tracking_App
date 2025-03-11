@@ -26,12 +26,27 @@ import { createTask } from "@/api.js";
 export default {
   data() {
     return {
-      taskName: "",
-      points: "",
+      tasks: [{ title: "", points: 0 }],
     };
   },
+  computed: {
+    totalPoints() {
+      return this.tasks.reduce((sum, task) => sum + task.points, 0);
+    },
+  },
   methods: {
-    async addTask() {
+    addTask() {
+      this.tasks.push({ title: "", points: 0 });
+    },
+    removeTask(index) {
+      this.tasks.splice(index, 1);
+    },
+    async submitTasks() {
+      if (this.totalPoints !== 100) {
+        alert("Total points must be exactly 100!");
+        return;
+      }
+
       try {
         await createTask({ name: this.taskName, points: this.points });
         this.$router.push("/"); // Redirect back to Home after adding
