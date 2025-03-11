@@ -59,7 +59,7 @@ export default {
     },
     async login() {
       try {
-        const response = await loginUser(this.email, this.password);
+        const response = await login(this.email, this.password);
         localStorage.setItem("token", response.data.token);
         this.isAuthenticated = true;
         this.loadTasks();

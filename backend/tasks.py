@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 tasks_bp = Blueprint("tasks", __name__)
 
-@tasks_bp.route("/tasks", methods=["POST"])
+@tasks_bp.route("/", methods=["POST"])
 @jwt_required()
 def add_task():
     user_email = get_jwt_identity()
@@ -32,7 +32,7 @@ def add_task():
     return jsonify({"message": "Task added successfully!"}), 201
 
 # Get all tasks for the logged-in user
-@tasks_bp.route("/tasks", methods=["GET"])
+@tasks_bp.route("/", methods=["GET"])
 @jwt_required()
 def get_tasks():
     user_email = get_jwt_identity()

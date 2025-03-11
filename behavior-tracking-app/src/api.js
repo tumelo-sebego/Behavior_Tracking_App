@@ -1,20 +1,53 @@
 import axios from "axios";
 
-const API = axios.create({
-  baseURL: "http://127.0.0.1:5000", // Flask backend URL
-  headers: { "Content-Type": "application/json" },
-});
+const API_URL = "http://127.0.0.1:5000"; // Flask Backend URL
 
-// User Authentication
-export const login = (email, password) =>
-  API.post("/auth/login", { email, password });
-export const register = (email, password) =>
-  API.post("/auth/register", { email, password });
+// Helper function to get auth headers
+function getAuthHeader() {
+  const token = localStorage.getItem("token");
+  return token
+    ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
+    : { "Content-Type": "application/json" };
+}
 
-// Task Management
-export const getTasks = () => API.get("/tasks");
-export const addTask = (task) => API.post("/tasks", task);
-export const completeTask = (taskId) => API.put(`/tasks/${taskId}/complete`);
-export const getDailyProgress = () => API.get("/progress/daily");
+// User Login
+export async function loginUser(email, password) {
+  return axios.post(
+    `${API_URL}/auth/login`,
+    { email, password },
+    { headers: { "Content-Type": "application/json" } },
+  );
+}
 
-export default API;
+// Fetch User's Tasks
+export async function getTasks() {
+  return axios.get(`${API_URL}/tasks`, { headers: getAuthHeader() });
+}
+
+// Complete a Task
+export async function completeTask(taskId) {
+  return axios.put(
+    `${API_URL}/tasks/${taskId}/complete`,
+    {},
+    { headers: getAuthHeader() },
+  );
+}
+
+// Get Daily Progress
+export async function getDailyProgress() {
+  return axios.get(`${API_URL}/progress/daily`, { headers: getAuthHeader() });
+}
+
+// User Registration
+export async function registerUser(name, email, password) {
+  return axios.post(
+    `${API_URL}/auth/register`,
+    { name, email, password },
+    { headers: { "Content-Type": "application/json" } },
+  );
+}
+
+// Logout (Remove Token)
+export function logoutUser() {
+  localStorage.removeItem("token");
+}
