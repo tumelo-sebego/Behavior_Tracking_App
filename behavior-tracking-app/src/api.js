@@ -53,11 +53,7 @@ export function logout() {
 }
 
 export const createTask = async (taskData) => {
-  const token = localStorage.getItem("token");
   return axios.post(`${API_URL}/tasks`, taskData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeader(),
   });
 };
