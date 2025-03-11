@@ -27,7 +27,7 @@ export default {
     async login() {
       try {
         const response = await login(this.email, this.password);
-        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("token", response.data.access_token);
         console.log("Login successful", response.data);
       } catch (error) {
         console.error("Login failed", error.response.data);
