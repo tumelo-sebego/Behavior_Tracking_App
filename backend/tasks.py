@@ -40,7 +40,7 @@ def get_tasks():
     return jsonify(tasks), 200
 
 # Mark a task as completed
-@tasks_bp.route("/tasks/<task_title>/complete", methods=["PATCH"])
+@tasks_bp.route("/<task_title>/complete", methods=["PATCH"])
 @jwt_required()
 def complete_task(task_title):
     user_email = get_jwt_identity()
