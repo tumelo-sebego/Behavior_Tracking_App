@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { api } from "../api";
+import { register } from "@/api.js";
 
 export default {
   name: "Register",
@@ -27,10 +27,8 @@ export default {
   methods: {
     async register() {
       try {
-        const response = await api.post("/auth/register", {
-          email: this.email,
-          password: this.password,
-        });
+        const response = await register(this.email, this.password);
+        localStorage.setItem("token", response.data.token);
         console.log("Registration successful", response.data);
       } catch (error) {
         console.error("Registration failed", error.response.data);
