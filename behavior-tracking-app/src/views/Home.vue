@@ -75,7 +75,11 @@ export default {
     },
     async loadTasks() {
       this.tasks = (await getTasks()).data;
-      this.progress = (await getDailyProgress()).data.progress;
+
+      // Calculate progress by summing points of completed tasks
+      this.progress = this.tasks
+        .filter((task) => task.completed) // Get only completed tasks
+        .reduce((total, task) => total + task.points, 0); // Sum their points
     },
     async markComplete(taskId) {
       await completeTask(taskId);
