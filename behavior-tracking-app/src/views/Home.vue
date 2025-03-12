@@ -90,7 +90,10 @@ export default {
       } catch (error) {
         console.error("Error fetching tasks:", error);
       } finally {
-        this.loading = false; // 👈 Set loading to false after fetching tasks
+        // 👇 Delay hiding the loading message for 2 seconds
+        setTimeout(() => {
+          this.loading = false;
+        }, 2000);
       }
     },
     async markComplete(taskId) {
