@@ -30,12 +30,11 @@
     <!-- Show Daily Tasks if Logged In -->
     <h1>Daily Tasks</h1>
     <ul>
-      <li v-for="task in tasks" :key="task._id">
+      <li v-for="task in tasks" :key="task.title">
         <span :class="{ completed: task.completed }"
           >{{ task.title }} - {{ task.points }} pts</span
         >
-        <p>{{ task._id }}</p>
-        <button @click="markComplete(task._id)" v-if="!task.completed">
+        <button @click="markComplete(task.title)" v-if="!task.completed">
           ✔ Complete
         </button>
       </li>
@@ -97,12 +96,12 @@ export default {
         }, 2000);
       }
     },
-    async markComplete(taskId) {
+    async markComplete(taskTitle) {
       try {
-        await completeTask(taskId); // Call API to mark as complete
+        await completeTask(taskTitle); // Call API to mark as complete
 
         // Instead of re-fetching tasks, update the local state
-        const task = this.tasks.find((t) => t._id === taskId);
+        const task = this.tasks.find((t) => t.title === taskTitle);
         if (task) task.completed = true;
 
         // Update progress locally
