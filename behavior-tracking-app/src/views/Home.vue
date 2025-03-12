@@ -32,7 +32,7 @@
     <ul>
       <li v-for="task in tasks" :key="task._id">
         <span :class="{ completed: task.completed }"
-          >{{ task.name }} - {{ task.points }} pts</span
+          >{{ task.title }} - {{ task.points }} pts</span
         >
         <button @click="markComplete(task._id)" v-if="!task.completed">
           ✔ Complete
@@ -84,6 +84,7 @@ export default {
       try {
         const response = await getTasks();
         this.tasks = response.data;
+        console.log(this.tasks);
         this.progress = this.tasks
           .filter((task) => task.completed)
           .reduce((total, task) => total + task.points, 0);
