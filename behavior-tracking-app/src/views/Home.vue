@@ -34,6 +34,7 @@
         <span :class="{ completed: task.completed }"
           >{{ task.title }} - {{ task.points }} pts</span
         >
+        <p>{{ task._id }}</p>
         <button @click="markComplete(task._id)" v-if="!task.completed">
           ✔ Complete
         </button>
@@ -84,7 +85,6 @@ export default {
       try {
         const response = await getTasks();
         this.tasks = response.data;
-        console.log(this.tasks);
         this.progress = this.tasks
           .filter((task) => task.completed)
           .reduce((total, task) => total + task.points, 0);
@@ -98,8 +98,20 @@ export default {
       }
     },
     async markComplete(taskId) {
-      await completeTask(taskId);
-      this.loadTasks();
+      try {
+        await completeTask(taskId); // Call API to mark as complete
+
+        // Instead of re-fetching tasks, update the local state
+        const task = this.tasks.find((t) => t._id === taskId);
+        if (task) task.completed = true;
+
+        // Update progress locally
+        this.progress = this.tasks
+          .filter((task) => task.completed)
+          .reduce((total, task) => total + task.points, 0);
+      } catch (error) {
+        console.error("Error marking task complete:", error);
+      }
     },
     logout() {
       localStorage.removeItem("token");
