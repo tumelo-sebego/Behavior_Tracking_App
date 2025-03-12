@@ -15,6 +15,11 @@
     <button @click="$router.push('/register')">Register</button>
   </div>
 
+  <!-- Show loading message while fetching tasks -->
+  <div v-else-if="loading">
+    <p>Loading tasks...</p>
+  </div>
+
   <!-- If no tasks, show the "Add New Task" view -->
   <div v-else-if="tasks.length === 0">
     <p>You have no tasks for today. Add new tasks to track your progress.</p>
@@ -40,7 +45,7 @@
 </template>
 
 <script>
-import { login, getTasks, completeTask, getDailyProgress } from "@/api.js";
+import { login, getTasks, completeTask } from "@/api.js";
 
 export default {
   data() {
@@ -50,9 +55,10 @@ export default {
       password: "",
       tasks: [],
       progress: 0,
+      loading: true,
     };
   },
-  created() {
+  async mounted() {
     this.checkAuth();
     if (this.isAuthenticated) {
       this.loadTasks();
@@ -74,12 +80,18 @@ export default {
       }
     },
     async loadTasks() {
-      this.tasks = (await getTasks()).data;
-
-      // Calculate progress by summing points of completed tasks
-      this.progress = this.tasks
-        .filter((task) => task.completed) // Get only completed tasks
-        .reduce((total, task) => total + task.points, 0); // Sum their points
+      this.loading = true; // 👈 Set loading to true before fetching tasks
+      try {
+        const response = await getTasks();
+        this.tasks = response.data;
+        this.progress = this.tasks
+          .filter((task) => task.completed)
+          .reduce((total, task) => total + task.points, 0);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      } finally {
+        this.loading = false; // 👈 Set loading to false after fetching tasks
+      }
     },
     async markComplete(taskId) {
       await completeTask(taskId);
