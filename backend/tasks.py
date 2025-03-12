@@ -56,8 +56,14 @@ def get_tasks():
 @jwt_required()
 def complete_task(task_title):
     user_email = get_jwt_identity()
-    mongo.db.tasks.update_one(
+    task_title = unquote(task_title)  # Decode the URL-encoded title
+    
+    result = mongo.db.tasks.update_one(
         {"title": task_title, "user_email": user_email}, 
         {"$set": {"completed": True}}
     )
+
+    if result.matched_count == 0:
+        return jsonify({"message": "Task not found"}), 404
+
     return jsonify({"message": "Task marked as completed"}), 200
