@@ -27,7 +27,7 @@ export async function getTasks() {
 // Complete a Task
 export async function completeTask(taskTitle) {
   return axios.patch(
-    `${API_URL}/${encodeURIComponent(taskTitle)}/complete`,
+    `${API_URL}/tasks/${encodeURIComponent(taskTitle)}/complete`,
     {},
     { headers: getAuthHeader() },
   );

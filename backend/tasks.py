@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from database import mongo
 from datetime import datetime, timedelta
+from urllib.parse import unquote
+
 
 tasks_bp = Blueprint("tasks", __name__)
 
@@ -57,7 +59,7 @@ def get_tasks():
 def complete_task(task_title):
     user_email = get_jwt_identity()
     task_title = unquote(task_title)  # Decode the URL-encoded title
-    
+
     result = mongo.db.tasks.update_one(
         {"title": task_title, "user_email": user_email}, 
         {"$set": {"completed": True}}
