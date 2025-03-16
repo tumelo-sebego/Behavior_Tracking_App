@@ -1,125 +1,215 @@
 <template>
-  <div v-if="!isAuthenticated">
+  <Menubar :model="menuItems" class="p-mb-3" />
+
+  <Sidebar v-model:visible="sidebarVisible">
+    <h3>Menu</h3>
+    <Button
+      label="Home"
+      icon="pi pi-home"
+      @click="$router.push('/')"
+      class="p-button-text" />
+    <Button
+      label="Add Task"
+      icon="pi pi-plus"
+      @click="$router.push('/add-task')"
+      class="p-button-text" />
+    <Button
+      label="Logout"
+      icon="pi pi-sign-out"
+      @click="logout"
+      class="p-button-danger" />
+  </Sidebar>
+
+  <div class="p-container">
     <!-- Show Login Form if Not Logged In -->
-    <h2>Login</h2>
-    <form @submit.prevent="login">
-      <input type="email" v-model="email" placeholder="Email" required />
-      <input
-        type="password"
-        v-model="password"
-        placeholder="Password"
-        required />
-      <button type="submit">Login</button>
-    </form>
-    <p><router-link to="/forgot-password">Forgot Password?</router-link></p>
-    <button @click="$router.push('/register')">Register</button>
-  </div>
+    <Card v-if="!isAuthenticated" class="p-shadow-3">
+      <template #title>Login</template>
+      <template #content>
+        <form @submit.prevent="login" class="p-fluid">
+          <FloatLabel>
+            <InputText id="email" v-model="email" />
+            <label for="email">Email</label>
+          </FloatLabel>
 
-  <!-- Show loading message while fetching tasks -->
-  <div v-else-if="loading">
-    <p>Loading tasks...</p>
-  </div>
+          <FloatLabel class="p-mt-3">
+            <Password id="password" v-model="password" toggleMask />
+            <label for="password">Password</label>
+          </FloatLabel>
 
-  <!-- If no tasks, show the "Add New Task" view -->
-  <div v-else-if="tasks.length === 0">
-    <p>You have no tasks for today. Add new tasks to track your progress.</p>
-    <button @click="goToAddTask">Add Task</button>
-  </div>
+          <Button
+            label="Login"
+            icon="pi pi-sign-in"
+            class="p-mt-3"
+            type="submit" />
+        </form>
+        <p class="p-mt-3">
+          <router-link to="/forgot-password">Forgot Password?</router-link>
+        </p>
+        <Button
+          label="Register"
+          class="p-button-secondary"
+          @click="$router.push('/register')" />
+      </template>
+    </Card>
 
-  <div v-else>
-    <!-- Show Daily Tasks if Logged In -->
-    <h1>Daily Tasks</h1>
-    <ul>
-      <li v-for="task in tasks" :key="task.title">
-        <span :class="{ completed: task.completed }"
-          >{{ task.title }} - {{ task.points }} pts</span
-        >
-        <button @click="markComplete(task.title)" v-if="!task.completed">
-          ✔ Complete
-        </button>
-      </li>
-    </ul>
-    <h2>Daily Progress: {{ progress }}%</h2>
-    <button @click="logout">Logout</button>
+    <!-- Loading Spinner -->
+    <div v-else-if="loading" class="p-text-center">
+      <ProgressSpinner />
+      <p>Loading tasks...</p>
+    </div>
+
+    <!-- No Tasks Message -->
+    <Card v-else-if="tasks.length === 0" class="p-shadow-3">
+      <template #title>No Tasks for Today</template>
+      <template #content>
+        <p>
+          You have no tasks for today. Add new tasks to track your progress.
+        </p>
+        <Button label="Add Task" icon="pi pi-plus" @click="goToAddTask" />
+      </template>
+    </Card>
+
+    <!-- Daily Tasks Table -->
+    <Card v-else class="p-shadow-3">
+      <template #title>Daily Tasks</template>
+      <template #content>
+        <DataTable :value="tasks" class="p-mt-3">
+          <Column field="title" header="Task">
+            <template #body="slotProps">
+              <span :class="{ completed: slotProps.data.completed }">{{
+                slotProps.data.title
+              }}</span>
+            </template>
+          </Column>
+          <Column field="points" header="Points"></Column>
+          <Column header="Action">
+            <template #body="slotProps">
+              <Button
+                v-if="!slotProps.data.completed"
+                icon="pi pi-check"
+                label="Complete"
+                class="p-button-success"
+                @click="markComplete(slotProps.data.title)" />
+            </template>
+          </Column>
+        </DataTable>
+        <h2 class="p-mt-3">Daily Progress: {{ progress }}%</h2>
+      </template>
+    </Card>
   </div>
 </template>
 
 <script>
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { login, getTasks, completeTask } from "@/api.js";
+import Menubar from "primevue/menubar";
+import Sidebar from "primevue/sidebar";
+import Card from "primevue/card";
+import InputText from "primevue/inputtext";
+import Password from "primevue/password";
+import Button from "primevue/button";
+import FloatLabel from "primevue/floatlabel";
+import ProgressSpinner from "primevue/progressspinner";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
 
 export default {
-  data() {
-    return {
-      isAuthenticated: false,
-      email: "",
-      password: "",
-      tasks: [],
-      progress: 0,
-      loading: true,
+  components: {
+    Menubar,
+    Sidebar,
+    Card,
+    InputText,
+    Password,
+    Button,
+    FloatLabel,
+    ProgressSpinner,
+    DataTable,
+    Column,
+  },
+  setup() {
+    const isAuthenticated = ref(false);
+    const email = ref("");
+    const password = ref("");
+    const tasks = ref([]);
+    const progress = ref(0);
+    const loading = ref(true);
+    const sidebarVisible = ref(false);
+    const router = useRouter();
+
+    const menuItems = ref([
+      { label: "Home", icon: "pi pi-home", command: () => router.push("/") },
+      {
+        label: "Add Task",
+        icon: "pi pi-plus",
+        command: () => router.push("/add-task"),
+      },
+      { label: "Logout", icon: "pi pi-sign-out", command: () => logout() },
+    ]);
+
+    const checkAuth = () => {
+      isAuthenticated.value = !!localStorage.getItem("token");
     };
-  },
-  async mounted() {
-    this.checkAuth();
-    if (this.isAuthenticated) {
-      this.loadTasks();
-    }
-  },
-  methods: {
-    checkAuth() {
-      const token = localStorage.getItem("token");
-      this.isAuthenticated = !!token;
-    },
-    async login() {
+
+    const loginUser = async () => {
       try {
-        const response = await login(this.email, this.password);
+        const response = await login(email.value, password.value);
         localStorage.setItem("token", response.data.token);
-        this.isAuthenticated = true;
-        this.loadTasks();
-      } catch (error) {
+        isAuthenticated.value = true;
+        loadTasks();
+      } catch {
         alert("Login failed! Check your credentials.");
       }
-    },
-    async loadTasks() {
-      this.loading = true; // 👈 Set loading to true before fetching tasks
+    };
+
+    const loadTasks = async () => {
+      loading.value = true;
       try {
         const response = await getTasks();
-        this.tasks = response.data;
-        this.progress = this.tasks
+        tasks.value = response.data;
+        progress.value = tasks.value
           .filter((task) => task.completed)
           .reduce((total, task) => total + task.points, 0);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
       } finally {
-        // 👇 Delay hiding the loading message for 2 seconds
-        setTimeout(() => {
-          this.loading = false;
-        }, 2000);
+        setTimeout(() => (loading.value = false), 2000);
       }
-    },
-    async markComplete(taskTitle) {
-      try {
-        await completeTask(taskTitle); // Call API to mark as complete
+    };
 
-        // Instead of re-fetching tasks, update the local state
-        const task = this.tasks.find((t) => t.title === taskTitle);
-        if (task) task.completed = true;
+    const markComplete = async (taskTitle) => {
+      await completeTask(taskTitle);
+      const task = tasks.value.find((t) => t.title === taskTitle);
+      if (task) task.completed = true;
+      progress.value = tasks.value
+        .filter((task) => task.completed)
+        .reduce((total, task) => total + task.points, 0);
+    };
 
-        // Update progress locally
-        this.progress = this.tasks
-          .filter((task) => task.completed)
-          .reduce((total, task) => total + task.points, 0);
-      } catch (error) {
-        console.error("Error marking task complete:", error);
-      }
-    },
-    logout() {
+    const logout = () => {
       localStorage.removeItem("token");
-      this.isAuthenticated = false;
-      this.$router.push("/"); // Stay on Home page
-    },
-    goToAddTask() {
-      this.$router.push("/add-task"); // Navigate to Add Task page
-    },
+      isAuthenticated.value = false;
+      router.push("/");
+    };
+
+    onMounted(() => {
+      checkAuth();
+      if (isAuthenticated.value) loadTasks();
+    });
+
+    return {
+      isAuthenticated,
+      email,
+      password,
+      tasks,
+      progress,
+      loading,
+      sidebarVisible,
+      menuItems,
+      login: loginUser,
+      loadTasks,
+      markComplete,
+      logout,
+      goToAddTask: () => router.push("/add-task"),
+    };
   },
 };
 </script>
@@ -128,5 +218,10 @@ export default {
 .completed {
   text-decoration: line-through;
   color: gray;
+}
+.p-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 1rem;
 }
 </style>
