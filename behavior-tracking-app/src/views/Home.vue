@@ -167,10 +167,15 @@ export default {
       try {
         const response = await getTasks();
         console.log(response.data);
-        tasks.value = response.data;
-        progress.value = tasks.value
-          .filter((task) => task.completed)
-          .reduce((total, task) => total + task.points, 0);
+        if (response.data.message) {
+          // No tasks found
+          tasks.value = [];
+        } else {
+          tasks.value = response.data;
+          progress.value = tasks.value
+            .filter((task) => task.completed)
+            .reduce((total, task) => total + task.points, 0);
+        }
       } finally {
         setTimeout(() => (loading.value = false), 2000);
       }
