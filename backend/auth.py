@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token
 from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash
 from database import mongo
 
 auth_bp = Blueprint("auth", __name__)
@@ -29,7 +30,10 @@ def login():
 @auth_bp.route("/register", methods=["POST"])
 def register():
     data = request.json
+    password = data["password"]
+    email = data["emial"]
+    hashed_password = generate_password_hash(password)  # Hash the password
     if mongo.db.users.find_one({"email": data["email"]}):
         return jsonify({"message": "User already exists"}), 400
-    mongo.db.users.insert_one(data)
+    mongo.db.users.insert_one({"email":email, password:hashed_password})
     return jsonify({"message": "User registered successfully"}), 201
