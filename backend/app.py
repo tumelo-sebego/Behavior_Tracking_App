@@ -10,7 +10,7 @@ import reset  # Ensure the reset job runs on startup
 
 app = Flask(__name__)
 app.config.from_object(Config)
-CORS(app)
+CORS(app, supports_credentials=True)
 JWTManager(app)
 
 # Register blueprints

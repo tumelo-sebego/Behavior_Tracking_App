@@ -18,7 +18,6 @@ def login():
 
     if not user:
         return jsonify({"message": "User not found"}), 404
-
     # Check if password is correct
     if not check_password_hash(user["password"], password):
         return jsonify({"message": "Invalid password", "password from server": user["password"], "your password": password}), 401
@@ -30,10 +29,10 @@ def login():
 @auth_bp.route("/register", methods=["POST"])
 def register():
     data = request.json
-    password = data["password"]
-    email = data["emial"]
+    email = data.get("email")
+    password = data.get("password")
     hashed_password = generate_password_hash(password)  # Hash the password
-    if mongo.db.users.find_one({"email": data["email"]}):
+    if mongo.db.users.find_one({"email": email}):
         return jsonify({"message": "User already exists"}), 400
-    mongo.db.users.insert_one({"email":email, password:hashed_password})
+    mongo.db.users.insert_one({"email":email, "password":hashed_password})
     return jsonify({"message": "User registered successfully"}), 201

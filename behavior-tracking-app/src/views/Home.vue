@@ -154,7 +154,7 @@ export default {
     const loginUser = async () => {
       try {
         const response = await login(email.value, password.value);
-        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("token", response.data.access_token);
         isAuthenticated.value = true;
         loadTasks();
       } catch {
@@ -166,6 +166,7 @@ export default {
       loading.value = true;
       try {
         const response = await getTasks();
+        console.log(response.data);
         tasks.value = response.data;
         progress.value = tasks.value
           .filter((task) => task.completed)

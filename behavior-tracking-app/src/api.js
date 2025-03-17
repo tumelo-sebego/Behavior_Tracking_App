@@ -13,7 +13,7 @@ function getAuthHeader() {
 // User Login
 export async function login(email, password) {
   return axios.post(
-    `${API_URL}/auth/login/`,
+    `${API_URL}/auth/login`,
     { email, password },
     { headers: { "Content-Type": "application/json" } },
   );
@@ -41,7 +41,7 @@ export async function getDailyProgress() {
 // User Registration
 export async function register(name, email, password) {
   return axios.post(
-    `${API_URL}/auth/register/`,
+    `${API_URL}/auth/register`,
     { name, email, password },
     { headers: { "Content-Type": "application/json" } },
   );

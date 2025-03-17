@@ -50,7 +50,11 @@ def add_tasks():
 @jwt_required()
 def get_tasks():
     user_email = get_jwt_identity()
-    tasks = list(mongo.db.tasks.find({"user_email": user_email}, {"_id": 0}))
+    tasks = list(mongo.db.tasks.find({"user_email": user_email}))
+
+    if not tasks:  # If no tasks exist
+        return jsonify({"message": "No tasks found"}), 200
+    
     return jsonify(tasks), 200
 
 # Mark a task as completed
