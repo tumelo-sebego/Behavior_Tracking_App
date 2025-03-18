@@ -70,32 +70,36 @@
     </Card>
 
     <!-- Daily Tasks Table -->
-    <Card v-else class="p-shadow-3">
-      <template #title>Daily Tasks</template>
-      <template #content>
-        <DataTable :value="tasks" class="p-mt-3">
-          <Column field="title" header="Task">
-            <template #body="slotProps">
-              <span :class="{ completed: slotProps.data.completed }">{{
-                slotProps.data.title
-              }}</span>
-            </template>
-          </Column>
-          <Column field="points" header="Points"></Column>
-          <Column header="Action">
-            <template #body="slotProps">
-              <Button
-                v-if="!slotProps.data.completed"
-                icon="pi pi-check"
-                label="Complete"
-                class="p-button-success"
-                @click="markComplete(slotProps.data.title)" />
-            </template>
-          </Column>
-        </DataTable>
-        <h2 class="p-mt-3">Daily Progress: {{ progress }}%</h2>
-      </template>
-    </Card>
+    <div v-else>
+      <!-- Progress Circle -->
+      <ProgressCircle :progress="progress" />
+      <Card class="p-shadow-3">
+        <template #title>Daily Tasks</template>
+        <template #content>
+          <DataTable :value="tasks" class="p-mt-3">
+            <Column field="title" header="Task">
+              <template #body="slotProps">
+                <span :class="{ completed: slotProps.data.completed }">{{
+                  slotProps.data.title
+                }}</span>
+              </template>
+            </Column>
+            <Column field="points" header="Points"></Column>
+            <Column header="Action">
+              <template #body="slotProps">
+                <Button
+                  v-if="!slotProps.data.completed"
+                  icon="pi pi-check"
+                  label="Complete"
+                  class="p-button-success"
+                  @click="markComplete(slotProps.data.title)" />
+              </template>
+            </Column>
+          </DataTable>
+          <h2 class="p-mt-3">Daily Progress: {{ progress }}%</h2>
+        </template>
+      </Card>
+    </div>
   </div>
 </template>
 
@@ -113,6 +117,7 @@ import FloatLabel from "primevue/floatlabel";
 import ProgressSpinner from "primevue/progressspinner";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import ProgressCircle from "@/components/ProgressCircle.vue";
 
 export default {
   components: {
@@ -126,6 +131,7 @@ export default {
     ProgressSpinner,
     DataTable,
     Column,
+    ProgressCircle,
   },
   setup() {
     const isAuthenticated = ref(false);
