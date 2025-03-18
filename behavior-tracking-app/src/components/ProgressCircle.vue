@@ -28,7 +28,7 @@ export default {
           {
             data: [this.progress, 100 - this.progress], // Completed vs Remaining
             backgroundColor: ["#0078F0", "#E5E7EB"], // Progress & Track Color
-            borderWidth: 6, // Thin stroke
+            borderWidth: 0, // Thin stroke
             borderRadius: 10, // Rounded edges
             hoverBorderWidth: 6,
           },
@@ -37,7 +37,7 @@ export default {
     },
     chartOptions() {
       return {
-        cutout: "80%", // Makes it thinner
+        cutout: "95%", // Makes it thinner
         plugins: {
           tooltip: { enabled: false },
           legend: { display: false },
@@ -51,9 +51,10 @@ export default {
 <style scoped>
 .progress-container {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 50%;
+  height: 50%;
   margin: auto;
+  margin-bottom: 2rem;
 }
 
 .small-chart {
@@ -66,7 +67,7 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 20px;
+  font-size: 4rem;
   font-weight: bold;
   color: #0078f0;
 }
