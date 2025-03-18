@@ -5,6 +5,9 @@ import { createPinia } from "pinia";
 import "./registerServiceWorker";
 import PrimeVue from "primevue/config";
 import Aura from "@primeuix/themes/aura";
+import "./assets/main.css";
+
+// import "@primeuix/themes/aura/theme.css";
 
 const app = createApp(App);
 app.use(PrimeVue, {
