@@ -52,6 +52,10 @@ def get_tasks():
     user_email = get_jwt_identity()
     tasks = list(mongo.db.tasks.find({"user_email": user_email}))
 
+    
+    for task in tasks:
+        task["_id"] = str(task["_id"])
+                           
     if not tasks:  # If no tasks exist
         return jsonify({"message": "No tasks found"}), 200
     
