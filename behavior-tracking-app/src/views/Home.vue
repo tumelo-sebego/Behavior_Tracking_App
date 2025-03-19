@@ -53,7 +53,7 @@
     </Card>
 
     <!-- Loading Spinner -->
-    <div v-else-if="loading" class="p-text-center">
+    <div v-else-if="loading" class="p-text-center t-center">
       <ProgressSpinner />
       <p>Loading tasks...</p>
     </div>
@@ -74,7 +74,9 @@
       <!-- Progress Circle -->
       <ProgressCircle :progress="progress" />
       <Card class="p-shadow-3">
-        <template #title>Daily Tasks</template>
+        <template #title>
+          <div class="t-center">Daily Tasks</div>
+        </template>
         <template #content>
           <DataTable :value="tasks" class="p-mt-3">
             <Column field="title" header="Task">
@@ -172,7 +174,6 @@ export default {
       loading.value = true;
       try {
         const response = await getTasks();
-        console.log(response.data);
         if (response.data.message) {
           // No tasks found
           tasks.value = [];
