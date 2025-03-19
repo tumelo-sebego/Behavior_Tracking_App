@@ -1,24 +1,6 @@
 <template>
-  <Menubar :model="menuItems" class="p-mb-3" />
-
-  <Sidebar v-model:visible="sidebarVisible">
-    <h3>Menu</h3>
-    <Button
-      label="Home"
-      icon="pi pi-home"
-      @click="$router.push('/')"
-      class="p-button-text" />
-    <Button
-      label="Add Task"
-      icon="pi pi-plus"
-      @click="$router.push('/add-task')"
-      class="p-button-text" />
-    <Button
-      label="Logout"
-      icon="pi pi-sign-out"
-      @click="logout"
-      class="p-button-danger" />
-  </Sidebar>
+  <!-- Navbar Component -->
+  <Navbar />
 
   <div class="p-container">
     <!-- Show Login Form if Not Logged In -->
@@ -106,11 +88,10 @@
 </template>
 
 <script>
+import Navbar from "@/components/Navbar.vue";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { login, getTasks, completeTask } from "@/api.js";
-import Menubar from "primevue/menubar";
-import Sidebar from "primevue/sidebar";
 import Card from "primevue/card";
 import InputText from "primevue/inputtext";
 import Password from "primevue/password";
@@ -123,8 +104,7 @@ import ProgressCircle from "@/components/ProgressCircle.vue";
 
 export default {
   components: {
-    Menubar,
-    Sidebar,
+    Navbar,
     Card,
     InputText,
     Password,
@@ -142,18 +122,7 @@ export default {
     const tasks = ref([]);
     const progress = ref(0);
     const loading = ref(true);
-    const sidebarVisible = ref(false);
     const router = useRouter();
-
-    const menuItems = ref([
-      { label: "Home", icon: "pi pi-home", command: () => router.push("/") },
-      {
-        label: "Add Task",
-        icon: "pi pi-plus",
-        command: () => router.push("/add-task"),
-      },
-      { label: "Logout", icon: "pi pi-sign-out", command: () => logout() },
-    ]);
 
     const checkAuth = () => {
       isAuthenticated.value = !!localStorage.getItem("token");
@@ -215,8 +184,6 @@ export default {
       tasks,
       progress,
       loading,
-      sidebarVisible,
-      menuItems,
       login: loginUser,
       loadTasks,
       markComplete,
