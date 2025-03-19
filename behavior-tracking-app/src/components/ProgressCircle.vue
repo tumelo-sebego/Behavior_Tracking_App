@@ -37,7 +37,7 @@ export default {
     },
     chartOptions() {
       return {
-        cutout: "95%", // Makes it thinner
+        cutout: "90%", // Makes it thinner
         plugins: {
           tooltip: { enabled: false },
           legend: { display: false },
