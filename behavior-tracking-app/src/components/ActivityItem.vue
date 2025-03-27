@@ -6,25 +6,33 @@
         <div class="status-row">
           <div
             class="status-indicator"
-            :class="status === 'done' ? 'status-done' : 'status-pending'"></div>
-          <span class="status-text">{{
-            status === "done" ? "Done" : "Pending"
-          }}</span>
+            :class="{
+              'status-done': status === 'done',
+              'status-pending': status === 'pending',
+              'status-expired': status === 'expired',
+              'status-active': status === 'active',
+            }"></div>
+          <span class="status-text">{{ statusText }}</span>
         </div>
       </div>
       <div class="separator"></div>
       <div class="duration-container">
-        <span class="duration-value">{{ duration }}</span>
-        <span class="duration-unit">min</span>
+        <template v-if="status === 'pending'">
+          <i class="pi pi-clock pending-icon"></i>
+        </template>
+        <template v-else>
+          <span class="duration-value">{{ duration }}</span>
+          <span class="duration-unit">min</span>
+        </template>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { defineProps } from "vue";
+import { defineProps, computed } from "vue";
 
-defineProps({
+const props = defineProps({
   title: {
     type: String,
     required: true,
@@ -36,8 +44,19 @@ defineProps({
   status: {
     type: String,
     required: true,
-    validator: (value) => ["done", "pending"].includes(value),
+    validator: (value) =>
+      ["done", "pending", "expired", "active"].includes(value),
   },
+});
+
+const statusText = computed(() => {
+  const statusMap = {
+    done: "Done",
+    pending: "Pending",
+    expired: "Expired",
+    active: "Active",
+  };
+  return statusMap[props.status];
 });
 </script>
 
@@ -87,6 +106,7 @@ defineProps({
   width: 0.4rem;
   height: 0.4rem;
   border-radius: 9999px;
+  box-sizing: border-box;
 }
 
 .status-text {
@@ -102,19 +122,34 @@ defineProps({
 }
 
 .status-pending {
-  border: 2px solid #232323;
+  border: 1px solid #4299e1;
   background-color: transparent;
 }
 
 .status-pending + .status-text {
+  color: #4299e1;
+}
+
+.status-expired {
+  background-color: #232323;
+}
+
+.status-expired + .status-text {
   color: #232323;
+}
+
+.status-active {
+  background-color: #fbbf24;
+}
+
+.status-active + .status-text {
+  color: #fbbf24;
 }
 
 .separator {
   width: 2px;
   background-color: rgba(35, 35, 35, 0.3);
   align-self: stretch;
-  /* height: 100%; */
   margin: 0;
 }
 
@@ -138,5 +173,10 @@ defineProps({
   color: #232323;
   font-size: 0.75rem;
   opacity: 0.8;
+}
+
+.pending-icon {
+  color: #4299e1;
+  font-size: 1.25rem;
 }
 </style>
