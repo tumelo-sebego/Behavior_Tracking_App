@@ -1,103 +1,77 @@
 <template>
-  <div>
-    <!-- Hamburger Icon to Toggle Sidebar -->
-    <Button
-      icon="pi pi-bars"
-      class="p-button-text p-mb-3"
-      @click="toggleSidebar" />
-
-    <!-- Sidebar Drawer -->
-    <Sidebar v-model:visible="sidebarVisible" position="left">
-      <div class="sidebar-content">
-        <div class="menu-items">
-          <Button label="Home" @click="navigateTo('/')" class="p-button-text" />
-          <Button
-            label="Daily Progress"
-            @click="navigateTo('/daily-progress')"
-            class="p-button-text" />
-          <Button
-            label="Weekly Progress"
-            @click="navigateTo('/weekly-progress')"
-            class="p-button-text" />
-          <Button
-            label="Monthly Progress"
-            @click="navigateTo('/monthly-progress')"
-            class="p-button-text" />
-        </div>
-        <div class="bottom-items">
-          <Button
-            label="Profile"
-            @click="navigateTo('/profile')"
-            class="p-button-text" />
-          <Button
-            label="Logout"
-            icon="pi pi-sign-out"
-            @click="logout"
-            class="p-button-danger" />
-        </div>
-      </div>
-    </Sidebar>
+  <div class="bottom-nav">
+    <div class="nav-container">
+      <button
+        v-for="tab in tabs"
+        :key="tab.id"
+        @click="$emit('navigate', tab.id)"
+        class="nav-button"
+        :class="active === tab.id ? 'active-tab' : 'inactive-tab'">
+        <span class="material-icons">{{ tab.icon }}</span>
+      </button>
+    </div>
   </div>
 </template>
 
-<script>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-import Sidebar from "primevue/sidebar";
-import Button from "primevue/button";
+<script setup>
+import { ref, defineProps, defineEmits } from "vue";
 
-export default {
-  components: {
-    Sidebar,
-    Button,
+defineProps({
+  active: {
+    type: String,
+    required: true,
   },
-  setup() {
-    const sidebarVisible = ref(false);
-    const router = useRouter();
+});
 
-    const toggleSidebar = () => {
-      sidebarVisible.value = !sidebarVisible.value;
-    };
+defineEmits(["navigate"]);
 
-    const navigateTo = (path) => {
-      router.push(path);
-      sidebarVisible.value = false; // Close the sidebar after navigation
-    };
-
-    const logout = () => {
-      localStorage.removeItem("token");
-      router.push("/");
-    };
-
-    return {
-      sidebarVisible,
-      toggleSidebar,
-      navigateTo,
-      logout,
-    };
-  },
-};
+const tabs = ref([
+  { id: "home", icon: "home" },
+  { id: "calendar", icon: "calendar_today" },
+  { id: "profile", icon: "person" },
+]);
 </script>
 
 <style scoped>
-.sidebar-content {
-  display: flex;
-  flex-direction: column;
-  height: 100%; /* Ensure the sidebar takes the full height */
-  justify-content: space-between; /* Push bottom-items to the bottom */
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #232323;
+  padding: 0.25rem;
+  border-radius: 9999px;
+  margin: 1rem;
 }
 
-.menu-items {
+.nav-container {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* Left-align menu items */
-  gap: 1rem; /* Add spacing between menu items */
+  justify-content: space-between;
+  padding: 1rem;
+  max-width: 28rem;
+  margin: 0 auto;
 }
 
-.bottom-items {
+.nav-button {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* Left-align bottom items */
-  gap: 1rem; /* Add spacing between bottom items */
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.active-tab {
+  background-color: #81c784;
+  color: #232323;
+}
+
+.inactive-tab {
+  background-color: transparent;
 }
 </style>

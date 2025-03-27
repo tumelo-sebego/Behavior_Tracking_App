@@ -126,8 +126,8 @@
           </template>
         </div>
 
-        <!-- Bottom Navigation -->
-        <BottomNavigation :active="activeTab" @navigate="handleNavigate" />
+        <!-- Replace BottomNavigation with Navbar -->
+        <Navbar :active="activeTab" @navigate="handleNavigate" />
       </template>
     </div>
   </div>
@@ -143,7 +143,7 @@ import FloatLabel from "primevue/floatlabel";
 import Header from "@/components/Header.vue";
 import ProgressCircle from "@/components/ProgressCircle.vue";
 import ActivityItem from "@/components/ActivityItem.vue";
-import BottomNavigation from "@/components/BottomNavigation.vue";
+import Navbar from "@/components/Navbar.vue";
 import { login, getTasks } from "@/api";
 
 const isAuthenticated = ref(false);

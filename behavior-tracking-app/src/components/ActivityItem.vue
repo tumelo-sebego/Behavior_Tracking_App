@@ -123,7 +123,7 @@ const statusText = computed(() => {
 
 .status-pending {
   border: 1px solid #4299e1;
-  background-color: transparent;
+  background-color: #4299e1;
 }
 
 .status-pending + .status-text {
