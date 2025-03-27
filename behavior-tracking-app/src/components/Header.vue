@@ -2,7 +2,7 @@
   <header class="header">
     <div class="header-content">
       <div>
-        <h1 class="user-greeting">Hi, {{ name }}</h1>
+        <h1 class="user-greeting">Ola, {{ name }}</h1>
         <p class="date">{{ date }}</p>
       </div>
     </div>

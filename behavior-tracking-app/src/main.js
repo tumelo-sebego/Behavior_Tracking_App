@@ -6,6 +6,7 @@ import "./registerServiceWorker";
 import PrimeVue from "primevue/config";
 import Aura from "@primeuix/themes/aura";
 import "./assets/main.css";
+import "./assets/globals.css";
 import "primeicons/primeicons.css";
 
 // import "@primeuix/themes/aura/theme.css";
