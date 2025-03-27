@@ -6,6 +6,7 @@
   border-width: 0;
   border-style: solid;
   border-color: #e5e7eb;
+  color: #232323;
 }
 
 :before,
@@ -14,7 +15,8 @@
 }
 
 html,
-:host {
+:host,
+body {
   line-height: 1.5;
   -webkit-text-size-adjust: 100%;
   -moz-tab-size: 4;
@@ -25,15 +27,16 @@ html,
   font-feature-settings: normal;
   font-variation-settings: normal;
   -webkit-tap-highlight-color: transparent;
+  color: #232323;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   margin: 0;
   line-height: inherit;
   background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  color: #232323;
   font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
 }
 
@@ -109,11 +112,7 @@ body {
   align-items: center;
   justify-content: space-between;
   border-radius: 9999px;
-  background-image: linear-gradient(to right, var(--tw-gradient-stops));
-  --tw-gradient-from: #000;
-  --tw-gradient-to: rgb(0 0 0 / 0);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-  --tw-gradient-to: #27272a;
+  background-color: #232323 !important;
   padding: 0.25rem;
   color: rgb(255 255 255);
 }
@@ -141,22 +140,22 @@ body {
 .login-title {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #333333;
+  color: #232323;
 }
 
 .section-title {
   font-size: 1.25rem;
   font-weight: bold;
   margin-bottom: 0.5rem;
-  color: #333333;
+  color: #232323;
 }
 
 .secondary-text {
-  color: #666666;
+  color: #232323;
 }
 
 .forgot-password {
-  color: #333333;
+  color: #232323;
 }
 
 .link {
@@ -170,18 +169,22 @@ body {
 }
 
 .content-container {
-  flex-grow: 1;
-  padding: 1rem;
+  flex: 1;
+  padding: 0 1.5rem;
+  overflow-y: auto;
 }
 
 .progress-container {
   display: flex;
   justify-content: center;
-  margin: 2rem 0;
+  align-items: center;
+  margin-bottom: 2rem;
 }
 
 .activities-container {
-  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .progress-view-container {
@@ -288,11 +291,11 @@ body {
 :deep(.p-card-title),
 :deep(.p-card-content),
 :deep(.p-card-body) {
-  color: #333333 !important;
+  color: #232323 !important;
 }
 
 :deep(.p-float-label label) {
-  color: #666666 !important;
+  color: #232323 !important;
 }
 
 :deep(.p-button .p-button-label),
@@ -303,5 +306,5 @@ body {
 .dark-text,
 :deep(.p-inputtext),
 :deep(.p-password-input) {
-  color: #333333 !important;
+  color: #232323 !important;
 }

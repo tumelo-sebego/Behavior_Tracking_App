@@ -151,7 +151,7 @@ const email = ref("");
 const password = ref("");
 const username = ref("Tumelo");
 const activeTab = ref("home");
-const progress = ref(0);
+const progress = ref(20);
 const date = ref("");
 const activeProgressType = ref("daily");
 
@@ -198,10 +198,8 @@ const loadTasks = async () => {
     } else {
       activities.value = response.data;
     }
-    // Animate progress
-    setTimeout(() => {
-      progress.value = 25;
-    }, 500);
+    // Set progress immediately
+    progress.value = 20;
   } catch (error) {
     console.error("Error loading tasks:", error);
   }

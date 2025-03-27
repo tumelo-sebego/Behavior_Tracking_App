@@ -36,11 +36,10 @@ defineProps({
 
 <style scoped>
 .activity-item {
-  background-color: white;
-  border-radius: 0.5rem;
+  background-color: rgba(239, 240, 216, 0.7);
+  border-radius: 0.75rem;
   padding: 1rem;
   margin-bottom: 0.75rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .activity-content {
@@ -52,29 +51,31 @@ defineProps({
 .activity-title-container {
   display: flex;
   align-items: center;
+  font-weight: 500;
+  color: #232323;
 }
 
 .status-indicator {
-  width: 0.75rem;
-  height: 0.75rem;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 9999px;
   margin-right: 0.75rem;
 }
 
 .status-done {
-  background-color: #10b981; /* green-500 */
+  background-color: #50a65d;
 }
 
 .status-pending {
-  background-color: #3b82f6; /* blue-500 */
+  border: 2px solid #232323;
 }
 
 .completed-task {
-  text-decoration: line-through;
-  color: #6b7280; /* gray-500 */
+  color: #232323;
 }
 
 .duration {
-  color: #4b5563; /* gray-600 */
+  color: #232323;
+  font-weight: 500;
 }
 </style>

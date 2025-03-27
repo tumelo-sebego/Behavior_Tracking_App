@@ -1,11 +1,7 @@
 <template>
   <header class="header">
-    <div class="header-content">
-      <div>
-        <h1 class="user-greeting">Ola, {{ name }}</h1>
-        <p class="date">{{ date }}</p>
-      </div>
-    </div>
+    <h1 class="user-greeting">Ola,{{ name }}</h1>
+    <p class="date">{{ date }}</p>
   </header>
 </template>
 
@@ -26,7 +22,7 @@ defineProps({
 
 <style scoped>
 .header {
-  padding: 1rem;
+  padding: 1.5rem 1.5rem 0.5rem 1.5rem;
 }
 
 .header-content {
@@ -37,11 +33,16 @@ defineProps({
 
 .user-greeting {
   font-size: 1.5rem;
-  font-weight: bold;
-  color: #333333;
+  font-weight: 700;
+  color: #232323;
+  margin-bottom: 0.25rem;
 }
 
 .date {
-  color: #4b5563; /* gray-600 */
+  color: #232323;
+  font-size: 0.875rem;
+  text-align: center;
+  width: 100%;
+  font-weight: 700;
 }
 </style>
