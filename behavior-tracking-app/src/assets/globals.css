@@ -185,6 +185,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  padding-bottom: calc(1px + 4rem); /* 4rem is the height of the navbar */
 }
 
 .progress-view-container {
