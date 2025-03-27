@@ -7,7 +7,9 @@
       :data="chartData"
       :options="chartOptions"
       class="small-chart" />
-    <div class="progress-text">{{ props.progress }}%</div>
+    <div class="progress-text" :style="{ color: progressTextColor }">
+      {{ props.progress }}%
+    </div>
   </div>
 </template>
 
@@ -64,6 +66,10 @@ const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: true,
 }));
+
+const progressTextColor = computed(() =>
+  props.progress > 0 ? "#50a65d" : "#232323",
+);
 </script>
 
 <style scoped>
@@ -87,7 +93,6 @@ const chartOptions = computed(() => ({
   transform: translate(-50%, -50%);
   font-size: 2.5rem;
   font-weight: 400;
-  color: #232323;
 }
 
 :deep(.p-chart) canvas {

@@ -9,3 +9,5 @@ node_modules/
 Thumbs.db
 
 .env
+.vscode/
+Behavior_Tracking_App.code-workspace

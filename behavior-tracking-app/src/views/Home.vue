@@ -199,7 +199,7 @@ const loadTasks = async () => {
       activities.value = response.data;
     }
     // Set progress immediately
-    progress.value = 20;
+    progress.value = 0;
   } catch (error) {
     console.error("Error loading tasks:", error);
   }
