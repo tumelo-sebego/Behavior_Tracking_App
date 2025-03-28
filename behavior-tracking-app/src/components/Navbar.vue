@@ -7,7 +7,8 @@
         @click="$emit('navigate', tab.id)"
         class="nav-button"
         :class="active === tab.id ? 'active-tab' : 'inactive-tab'">
-        <span class="material-icons">{{ tab.icon }}</span>
+        <span v-if="active === tab.id" class="nav-text">{{ tab.text }}</span>
+        <span v-else class="material-icons">{{ tab.icon }}</span>
       </button>
     </div>
   </div>
@@ -26,9 +27,9 @@ defineProps({
 defineEmits(["navigate"]);
 
 const tabs = ref([
-  { id: "home", icon: "home" },
-  { id: "calendar", icon: "calendar_today" },
-  { id: "profile", icon: "person" },
+  { id: "home", icon: "home", text: "Home" },
+  { id: "calendar", icon: "calendar_today", text: "Goals" },
+  { id: "profile", icon: "person", text: "Profile" },
 ]);
 </script>
 
@@ -38,32 +39,38 @@ const tabs = ref([
 .bottom-nav {
   position: fixed;
   bottom: 0;
-  left: 0;
+  left: 40px;
+  display: block;
   right: 0;
   background-color: #232323;
   padding: 0.25rem;
   border-radius: 9999px;
-  margin: 1rem;
+  margin: 1rem 0;
+  width: 20rem;
 }
 
 .nav-container {
   display: flex;
   justify-content: space-between;
-  padding: 1rem;
   max-width: 28rem;
-  margin: 0 auto;
 }
 
 .nav-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3rem;
-  height: 3rem;
+  min-width: 80px;
+  height: 2.5rem;
   border-radius: 9999px;
   border: none;
   cursor: pointer;
   color: white;
+  padding: 0 1.5rem;
+}
+
+.nav-text {
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .active-tab {
@@ -73,5 +80,10 @@ const tabs = ref([
 
 .inactive-tab {
   background-color: transparent;
+}
+
+.material-icons {
+  font-size: 1.5rem;
+  color: #f1f3e6;
 }
 </style>

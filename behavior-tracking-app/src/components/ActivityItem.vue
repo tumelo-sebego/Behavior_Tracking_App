@@ -62,7 +62,7 @@ const statusText = computed(() => {
 
 <style scoped>
 .activity-item {
-  background-color: rgba(239, 240, 216, 0.7);
+  background-color: #f1f3e6;
   border-radius: 1rem;
   padding: 0.75rem;
   margin-bottom: 0.75rem;
