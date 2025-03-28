@@ -20,10 +20,25 @@
           :key="tab.id"
           @click="handleTabClick(tab.id)"
           class="nav-button"
-          :class="props.active === tab.id ? 'active-tab' : 'inactive-tab'">
-          <span v-if="props.active === tab.id" class="nav-text">{{
-            tab.text
-          }}</span>
+          :class="{
+            'active-tab':
+              tab.id === 'calendar'
+                ? isGoalsMenuOpen
+                : props.active === tab.id && !isGoalsMenuOpen,
+            'inactive-tab':
+              tab.id === 'calendar'
+                ? !isGoalsMenuOpen
+                : props.active !== tab.id || isGoalsMenuOpen,
+          }">
+          <span
+            v-if="
+              tab.id === 'calendar'
+                ? isGoalsMenuOpen
+                : props.active === tab.id && !isGoalsMenuOpen
+            "
+            class="nav-text"
+            >{{ tab.text }}</span
+          >
           <span v-else class="material-icons">{{ tab.icon }}</span>
         </button>
       </div>
