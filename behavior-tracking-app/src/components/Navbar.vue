@@ -6,9 +6,11 @@
         <button
           v-for="item in goalItems"
           :key="item.id"
-          @click="$emit('goalSelect', item.id)"
+          @click="handleGoalSelect(item.id)"
           class="nav-button"
-          :class="{ 'active-tab': props.activeGoal === item.id }">
+          :class="{
+            'active-tab': props.activeGoal === item.id && !justOpened,
+          }">
           <span class="material-icons icon-spacing">{{ item.icon }}</span>
           <span class="nav-text">{{ item.text }}</span>
         </button>
@@ -56,21 +58,30 @@ const props = defineProps({
   },
   activeGoal: {
     type: String,
-    default: "daily",
+    default: "",
   },
 });
 
 const emit = defineEmits(["navigate", "goalSelect"]);
 
 const isGoalsMenuOpen = ref(false);
+const justOpened = ref(true);
 
 function handleTabClick(tabId) {
   if (tabId === "calendar") {
     isGoalsMenuOpen.value = !isGoalsMenuOpen.value;
+    if (isGoalsMenuOpen.value) {
+      justOpened.value = true;
+    }
   } else {
     isGoalsMenuOpen.value = false;
     emit("navigate", tabId);
   }
+}
+
+function handleGoalSelect(goalId) {
+  justOpened.value = false;
+  emit("goalSelect", goalId);
 }
 
 const tabs = ref([
