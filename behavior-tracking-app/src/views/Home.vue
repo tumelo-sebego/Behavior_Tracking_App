@@ -127,7 +127,11 @@
         </div>
 
         <!-- Replace BottomNavigation with Navbar -->
-        <Navbar :active="activeTab" @navigate="handleNavigate" />
+        <Navbar
+          :active="activeTab"
+          :active-goal="activeProgressType"
+          @navigate="handleNavigate"
+          @goal-select="handleProgressTypeChange" />
       </template>
     </div>
   </div>
