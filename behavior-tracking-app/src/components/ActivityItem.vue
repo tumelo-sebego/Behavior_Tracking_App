@@ -29,19 +29,32 @@
 
     <Dialog
       v-model:visible="dialogVisible"
-      :style="{ width: '100%', height: '100%', maxWidth: '100vw', margin: 0 }"
-      position="center"
       modal
-      :closable="true"
-      closeOnEscape>
-      <template #header>
-        <div class="dialog-header">
-          <span>{{ title }}</span>
-          <Button icon="pi pi-times" @click="dialogVisible = false" text />
+      :closable="false"
+      :showHeader="false"
+      :dismissableMask="true"
+      :contentStyle="{ padding: '0', height: '100vh' }"
+      :style="{
+        width: '100vw',
+        height: '100vh',
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        margin: '0',
+        borderRadius: '0',
+      }"
+      position="top"
+      class="activity-dialog">
+      <div
+        class="dialog-wrapper"
+        :class="{ 'dialog-enter-active': dialogVisible }">
+        <div class="close-button-container">
+          <Button
+            icon="pi pi-times"
+            @click="dialogVisible = false"
+            text
+            class="close-button" />
         </div>
-      </template>
-      <div class="dialog-content">
-        <h2>{{ title }}</h2>
+        <h2 class="dialog-title">{{ title }}</h2>
         <div class="timer-display">00:00:00</div>
         <div class="activity-points">
           <span>Activity Points: {{ duration }}</span>
@@ -221,21 +234,68 @@ function showDialog() {
 }
 
 /* Dialog styles */
-.dialog-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
+:deep(.activity-dialog) {
+  overflow: hidden;
 }
 
-.dialog-content {
+:deep(.p-dialog) {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+:deep(.p-dialog-mask) {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+:deep(.p-dialog-content) {
+  padding: 0 !important;
+  border: none !important;
+  background-color: rgb(250 251 231) !important;
+  height: 100vh !important;
+}
+
+.dialog-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  height: calc(100vh - 6rem);
+  height: 100vh;
+  width: 100%;
   background-color: rgb(250 251 231);
+  position: relative;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.dialog-enter-active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.close-button-container {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+}
+
+.close-button {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  border-radius: 50% !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+}
+
+.dialog-title {
+  margin-top: 2rem;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #232323;
 }
 
 .timer-display {
@@ -260,16 +320,5 @@ function showDialog() {
 
 .action-buttons {
   margin-top: 2rem;
-}
-
-:deep(.p-dialog) {
-  margin: 0;
-  max-height: 100vh;
-  height: 100vh;
-  border-radius: 0;
-}
-
-:deep(.p-dialog-content) {
-  padding: 0 !important;
 }
 </style>
