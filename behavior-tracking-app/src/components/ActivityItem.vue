@@ -1,5 +1,5 @@
 <template>
-  <div class="activity-item">
+  <div class="activity-item" @click="showDialog">
     <div class="activity-content">
       <div class="activity-info">
         <div class="title">{{ title }}</div>
@@ -26,11 +26,44 @@
         </template>
       </div>
     </div>
+
+    <Dialog
+      v-model:visible="dialogVisible"
+      :style="{ width: '100%', height: '100%', maxWidth: '100vw', margin: 0 }"
+      position="center"
+      modal
+      :closable="true"
+      closeOnEscape>
+      <template #header>
+        <div class="dialog-header">
+          <span>{{ title }}</span>
+          <Button icon="pi pi-times" @click="dialogVisible = false" text />
+        </div>
+      </template>
+      <div class="dialog-content">
+        <h2>{{ title }}</h2>
+        <div class="timer-display">00:00:00</div>
+        <div class="activity-points">
+          <span>Activity Points: {{ duration }}</span>
+        </div>
+        <div class="activity-status">
+          <span>Status: {{ statusText }}</span>
+        </div>
+        <div class="action-buttons">
+          <Button
+            v-if="status === 'pending'"
+            label="Start"
+            class="p-button-success" />
+        </div>
+      </div>
+    </Dialog>
   </div>
 </template>
 
 <script setup>
-import { defineProps, computed } from "vue";
+import { ref, computed } from "vue";
+import Dialog from "primevue/dialog";
+import Button from "primevue/button";
 
 const props = defineProps({
   title: {
@@ -49,6 +82,8 @@ const props = defineProps({
   },
 });
 
+const dialogVisible = ref(false);
+
 const statusText = computed(() => {
   const statusMap = {
     done: "Done",
@@ -58,6 +93,10 @@ const statusText = computed(() => {
   };
   return statusMap[props.status];
 });
+
+function showDialog() {
+  dialogVisible.value = true;
+}
 </script>
 
 <style scoped>
@@ -66,6 +105,7 @@ const statusText = computed(() => {
   border-radius: 1rem;
   padding: 0.75rem;
   margin-bottom: 0.75rem;
+  cursor: pointer;
 }
 
 .activity-content {
@@ -178,5 +218,58 @@ const statusText = computed(() => {
 .pending-icon {
   color: #4299e1;
   font-size: 1.25rem;
+}
+
+/* Dialog styles */
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  height: calc(100vh - 6rem);
+  background-color: rgb(250 251 231);
+}
+
+.timer-display {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 2rem 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.activity-points,
+.activity-status {
+  margin: 1rem 0;
+  font-size: 1.2rem;
+}
+
+.action-buttons {
+  margin-top: 2rem;
+}
+
+:deep(.p-dialog) {
+  margin: 0;
+  max-height: 100vh;
+  height: 100vh;
+  border-radius: 0;
+}
+
+:deep(.p-dialog-content) {
+  padding: 0 !important;
 }
 </style>
