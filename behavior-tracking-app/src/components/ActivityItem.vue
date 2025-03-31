@@ -22,6 +22,14 @@
         <template v-if="status === 'pending'">
           <i class="pi pi-clock pending-icon"></i>
         </template>
+        <template v-if="status === 'active'">
+          <i
+            :class="
+              isClockFilled
+                ? 'pi pi-clock active-icon-filled'
+                : 'pi pi-clock active-icon-outlined'
+            "></i>
+        </template>
         <template v-else>
           <span class="duration-value">
             {{ duration < 60 ? duration : Math.floor(duration / 60) }}
@@ -80,7 +88,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 
@@ -111,6 +119,26 @@ const statusText = computed(() => {
     active: "Active",
   };
   return statusMap[props.status];
+});
+
+// Reactive state for toggling the clock icon
+const isClockFilled = ref(true);
+let clockInterval = null;
+
+// Start the interval when the component is mounted
+onMounted(() => {
+  if (props.status === "active") {
+    clockInterval = setInterval(() => {
+      isClockFilled.value = !isClockFilled.value; // Toggle the clock icon
+    }, 500); // Half a second
+  }
+});
+
+// Clear the interval when the component is unmounted
+onUnmounted(() => {
+  if (clockInterval) {
+    clearInterval(clockInterval);
+  }
 });
 </script>
 
@@ -322,5 +350,27 @@ const statusText = computed(() => {
 
 .action-buttons {
   margin-top: 2rem;
+}
+
+/* Filled clock icon */
+.active-icon-filled {
+  color: #4299e1; /* Blue color for the filled clock */
+  font-size: 1.25rem;
+  background-color: rgb(80 166 93); /* Same color as the icon */
+  border-radius: 50%; /* Make it circular */
+  padding: 0.2rem; /* Add padding to simulate a filled effect */
+  box-sizing: content-box; /* Ensure padding is part of the icon */
+  color: #e6e7e9;
+}
+
+/* Outlined clock icon */
+.active-icon-outlined {
+  color: #4299e1; /* Blue color for the outlined clock */
+  font-size: 1.25rem;
+  border: 2px solid rgb(80 166 93); /* Add a border to simulate an outline */
+  border-radius: 50%; /* Make it circular */
+  padding: 0.2rem; /* Add padding to simulate spacing */
+  box-sizing: content-box; /* Ensure padding is part of the icon */
+  background-color: transparent; /* Transparent background for outline */
 }
 </style>
