@@ -60,8 +60,24 @@
                 :key="activity.id"
                 :title="activity.title"
                 :duration="activity.duration"
-                :status="activity.status" />
+                :status="activity.status"
+                @open-dialog="showDialog(activity)" />
             </div>
+
+            <!-- ActivityTimer dialog -->
+            <ActivityTimer
+              v-if="selectedActivity"
+              v-model:visible="dialogVisible"
+              :title="selectedActivity.title"
+              :duration="
+                selectedActivity.status === 'expired' ||
+                selectedActivity.status === 'done'
+                  ? selectedActivity.duration
+                  : null
+              "
+              :status="selectedActivity.status"
+              @active-state="onActiveState"
+              @complete="onTimerComplete" />
           </template>
 
           <template v-else-if="activeTab === 'calendar'">
@@ -148,6 +164,7 @@ import Header from "@/components/Header.vue";
 import ProgressCircle from "@/components/ProgressCircle.vue";
 import ActivityItem from "@/components/ActivityItem.vue";
 import Navbar from "@/components/Navbar.vue";
+import ActivityTimer from "@/components/ActivityTimer.vue";
 import { login, getTasks } from "@/api";
 
 const isAuthenticated = ref(false);
@@ -165,6 +182,31 @@ const activities = ref([
   { id: 2, title: "Morning Yoga", duration: 32, status: "done" },
   { id: 3, title: "Read a book", duration: 15, status: "pending" },
 ]);
+
+const dialogVisible = ref(false);
+const selectedActivity = ref(null);
+
+function showDialog(activity) {
+  selectedActivity.value = activity;
+  dialogVisible.value = true;
+}
+
+function onActiveState() {
+  console.log("Timer is active");
+  // Handle any logic when the timer becomes active
+}
+
+function onTimerComplete(data) {
+  console.log("Timer Complete:", data);
+  // Handle the completion of the timer, e.g., updating activity status
+  const activity = activities.value.find(
+    (activity) => activity.title === selectedActivity.value.title,
+  );
+  if (activity) {
+    activity.status = "done"; // Update the activity status to "done"
+  }
+  dialogVisible.value = false; // Close the dialog
+}
 
 const progressTypeMessage = computed(() => {
   switch (activeProgressType.value) {
@@ -236,4 +278,15 @@ onMounted(() => {
 
 <style scoped>
 /* All styles have been moved to globals.css */
+.content-container {
+  padding: 1rem;
+}
+
+.activities-container {
+  margin-top: 1rem;
+}
+
+.progress-container {
+  margin-bottom: 1rem;
+}
 </style>

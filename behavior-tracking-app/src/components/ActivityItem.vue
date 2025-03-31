@@ -1,5 +1,7 @@
 <template>
-  <div class="activity-item" @click="showDialog">
+  <div
+    class="activity-item"
+    @click="$emit('open-dialog', { title, duration, status })">
     <div class="activity-content">
       <div class="activity-info">
         <div class="title">{{ title }}</div>
@@ -106,10 +108,6 @@ const statusText = computed(() => {
   };
   return statusMap[props.status];
 });
-
-function showDialog() {
-  dialogVisible.value = true;
-}
 </script>
 
 <style scoped>
