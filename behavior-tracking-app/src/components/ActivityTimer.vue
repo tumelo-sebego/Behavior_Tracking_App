@@ -68,7 +68,7 @@ function startTimer() {
       elapsedTime.value += 1; // Increment elapsedTime by 1 each second
     }, 1000);
     // Change status to active
-    emit("active-state"); // Notify parent component to update the status
+    emit("active-state", new Date().toISOString()); // Notify parent component to update the status
     isClicked.value = true; // Update the button state
   }
 }
@@ -78,7 +78,7 @@ function stopTimer() {
   if (timer.value) {
     clearInterval(timer.value);
     timer.value = null;
-    emit("complete", elapsedTime.value); // Notify parent to change status to "done"
+    emit("complete", elapsedTime.value, new Date().toISOString()); // Notify parent to change status to "done"
     isClicked.value = false; // Reset the button state
   }
 }
@@ -121,15 +121,14 @@ function getOrdinalSuffix(day) {
   }
 }
 
-// Computed property to format the dateCreated
-const formattedDateCreated = computed(() => {
-  if (!props.dateCreated) return "N/A";
-  const date = new Date(props.dateCreated);
+// Computed property to format the timeActive (start date)
+const formattedStartDate = computed(() => {
+  if (!props.timeActive) return "N/A"; // Handle cases where timeActive is not provided
+  const date = new Date(props.timeActive);
   const day = date.getDate();
   const month = date.toLocaleString("en-US", { month: "long" });
   return `${day}${getOrdinalSuffix(day)} ${month}`;
 });
-
 // Computed property to format timeActive
 const formattedTimeActive = computed(() => {
   if (!props.timeActive) return "N/A";
@@ -196,7 +195,7 @@ const isClicked = ref(false);
         class="activity-details-pill">
         <div class="details-group">
           <i class="pi pi-calendar calendar-icon"></i>
-          <span class="details-date">{{ formattedDateCreated }}</span>
+          <span class="details-date">{{ formattedStartDate }}</span>
         </div>
         <div class="details-group">
           <span class="vertical-line"></span>

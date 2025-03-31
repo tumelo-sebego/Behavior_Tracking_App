@@ -79,7 +79,7 @@
               :time-active="selectedActivity.timeActive"
               :time-done="selectedActivity.timeDone"
               :date-created="selectedActivity.dateCreated"
-              @active-state="selectedActivity.status = 'active'"
+              @active-state="handleActiveState"
               @complete="handleComplete" />
           </template>
 
@@ -272,13 +272,18 @@ const handleProgressTypeChange = (type) => {
   activeProgressType.value = type;
 };
 
-function handleComplete(elapsedTime) {
+function handleComplete(elapsedTime, timeDone) {
   if (selectedActivity.value) {
     selectedActivity.value.status = "done"; // Set status to "done"
-    console.log(elapsedTime);
-    console.log("Activity duration before", selectedActivity.value.duration);
-    selectedActivity.value.duration = elapsedTime; // Convert elapsed time to minutes
-    console.log("Activity duration", selectedActivity.value.duration);
+    selectedActivity.value.duration = elapsedTime; // Update duration with elapsed time
+    selectedActivity.value.timeDone = timeDone; // Assign the finish time
+  }
+}
+
+function handleActiveState(timeActive) {
+  if (selectedActivity.value) {
+    selectedActivity.value.timeActive = timeActive; // Assign the start time
+    selectedActivity.value.status = "active"; // Update the status to active
   }
 }
 
