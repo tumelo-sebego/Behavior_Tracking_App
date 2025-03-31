@@ -80,7 +80,7 @@
               :time-done="selectedActivity.timeDone"
               :date-created="selectedActivity.dateCreated"
               @active-state="selectedActivity.status = 'active'"
-              @complete="selectedActivity.status = 'done'" />
+              @complete="handleComplete" />
           </template>
 
           <template v-else-if="activeTab === 'calendar'">
@@ -204,7 +204,7 @@ const activities = ref([
   {
     id: 3,
     title: "Reading A Book",
-    duration: 25,
+    duration: null,
     status: "pending",
     timeActive: null, // Not yet active
     timeDone: null, // Not yet done
@@ -271,6 +271,16 @@ const handleNavigate = (tab) => {
 const handleProgressTypeChange = (type) => {
   activeProgressType.value = type;
 };
+
+function handleComplete(elapsedTime) {
+  if (selectedActivity.value) {
+    selectedActivity.value.status = "done"; // Set status to "done"
+    console.log(elapsedTime);
+    console.log("Activity duration before", selectedActivity.value.duration);
+    selectedActivity.value.duration = elapsedTime; // Convert elapsed time to minutes
+    console.log("Activity duration", selectedActivity.value.duration);
+  }
+}
 
 onMounted(() => {
   // Format current date

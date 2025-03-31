@@ -23,8 +23,12 @@
           <i class="pi pi-clock pending-icon"></i>
         </template>
         <template v-else>
-          <span class="duration-value">{{ duration }}</span>
-          <span class="duration-unit">min</span>
+          <span class="duration-value">
+            {{ duration < 60 ? duration : Math.floor(duration / 60) }}
+          </span>
+          <span class="duration-unit">
+            {{ duration < 60 ? "sec" : "min" }}
+          </span>
         </template>
       </div>
     </div>

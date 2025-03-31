@@ -78,8 +78,8 @@ function stopTimer() {
   if (timer.value) {
     clearInterval(timer.value);
     timer.value = null;
+    emit("complete", elapsedTime.value); // Notify parent to change status to "done"
     isClicked.value = false; // Reset the button state
-    emit("complete"); // Notify parent to change status to "done"
   }
 }
 
