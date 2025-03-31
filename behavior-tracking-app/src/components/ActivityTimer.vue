@@ -191,7 +191,9 @@ const isClicked = ref(false);
       </div>
 
       <!-- Activity Details Pill -->
-      <div class="activity-details-pill">
+      <div
+        v-if="status !== 'pending' && status !== 'active'"
+        class="activity-details-pill">
         <div class="details-group">
           <i class="pi pi-calendar calendar-icon"></i>
           <span class="details-date">{{ formattedDateCreated }}</span>
