@@ -67,6 +67,9 @@ function startTimer() {
     timer.value = setInterval(() => {
       elapsedTime.value += 1; // Increment elapsedTime by 1 each second
     }, 1000);
+    // Change status to active
+    emit("active-state"); // Notify parent component to update the status
+    isClicked.value = true; // Update the button state
   }
 }
 
@@ -75,6 +78,8 @@ function stopTimer() {
   if (timer.value) {
     clearInterval(timer.value);
     timer.value = null;
+    isClicked.value = false; // Reset the button state
+    emit("complete"); // Notify parent to change status to "done"
   }
 }
 
@@ -568,11 +573,12 @@ const isClicked = ref(false);
 
 .action-buttons-pill.clicked {
   background-color: #232323;
-  color: #50a65d;
+  color: #e5e7eb;
 }
 
 .action-text {
   font-size: 1rem;
   font-weight: 500;
+  color: inherit;
 }
 </style>

@@ -79,8 +79,8 @@
               :time-active="selectedActivity.timeActive"
               :time-done="selectedActivity.timeDone"
               :date-created="selectedActivity.dateCreated"
-              @active-state="onActiveState"
-              @complete="onTimerComplete" />
+              @active-state="selectedActivity.status = 'active'"
+              @complete="selectedActivity.status = 'done'" />
           </template>
 
           <template v-else-if="activeTab === 'calendar'">
@@ -219,23 +219,6 @@ const selectedActivity = ref(null);
 function showDialog(activity) {
   selectedActivity.value = activity; // Store the entire activity object
   dialogVisible.value = true;
-}
-
-function onActiveState() {
-  console.log("Timer is active");
-  // Handle any logic when the timer becomes active
-}
-
-function onTimerComplete(data) {
-  console.log("Timer Complete:", data);
-  // Handle the completion of the timer, e.g., updating activity status
-  const activity = activities.value.find(
-    (activity) => activity.title === selectedActivity.value.title,
-  );
-  if (activity) {
-    activity.status = "done"; // Update the activity status to "done"
-  }
-  dialogVisible.value = false; // Close the dialog
 }
 
 const progressTypeMessage = computed(() => {
