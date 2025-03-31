@@ -24,6 +24,24 @@ const props = defineProps({
     validator: (value) =>
       ["pending", "active", "expired", "done"].includes(value),
   },
+  points: {
+    type: Number,
+    required: true,
+  },
+  timeActive: {
+    type: String,
+    required: false,
+    default: null,
+  },
+  timeDone: {
+    type: String,
+    required: false,
+    default: null,
+  },
+  dateCreated: {
+    type: String,
+    required: true,
+  },
 });
 
 const emit = defineEmits(["update:visible", "complete", "active-state"]);
@@ -111,18 +129,15 @@ watch(
       <h2 class="dialog-title">{{ title }}</h2>
       <div class="timer-display">{{ formattedTime }}</div>
       <div class="activity-status">
-        <span
-          >Status:
-          {{
-            status === "pending"
-              ? "Pending"
-              : status === "active"
-              ? "Active"
-              : status === "expired"
-              ? "Expired"
-              : "Done"
-          }}</span
-        >
+        <span>Status: {{ status }}</span>
+      </div>
+      <div class="activity-points">
+        <span>Points: {{ points }}</span>
+      </div>
+      <div class="activity-details">
+        <p>Time Active: {{ timeActive || "N/A" }}</p>
+        <p>Time Done: {{ timeDone || "N/A" }}</p>
+        <p>Date Created: {{ dateCreated }}</p>
       </div>
       <div class="action-buttons">
         <Button
@@ -171,7 +186,9 @@ watch(
 }
 
 .timer-display {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: #eaeed3;
+  font-size: 2rem;
+  font-weight: 700;
   border-radius: 50%;
   width: 200px;
   height: 200px;
@@ -295,24 +312,20 @@ watch(
   color: #232323;
 }
 
-.timer-display {
-  font-size: 3rem;
-  font-weight: 700;
-  margin: 2rem 0;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
-  width: 200px;
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
 .activity-points,
 .activity-status {
   margin: 1rem 0;
   font-size: 1.2rem;
+}
+
+.activity-details {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.activity-details p {
+  margin: 0.5rem 0;
 }
 
 .action-buttons {

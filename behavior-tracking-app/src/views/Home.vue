@@ -61,6 +61,10 @@
                 :title="activity.title"
                 :duration="activity.duration"
                 :status="activity.status"
+                :points="activity.points"
+                :time-active="activity.timeActive"
+                :time-done="activity.timeDone"
+                :date-created="activity.dateCreated"
                 @open-dialog="showDialog(activity)" />
             </div>
 
@@ -69,13 +73,12 @@
               v-if="selectedActivity"
               v-model:visible="dialogVisible"
               :title="selectedActivity.title"
-              :duration="
-                selectedActivity.status === 'expired' ||
-                selectedActivity.status === 'done'
-                  ? selectedActivity.duration
-                  : null
-              "
+              :duration="selectedActivity.duration"
               :status="selectedActivity.status"
+              :points="selectedActivity.points"
+              :time-active="selectedActivity.timeActive"
+              :time-done="selectedActivity.timeDone"
+              :date-created="selectedActivity.dateCreated"
               @active-state="onActiveState"
               @complete="onTimerComplete" />
           </template>
@@ -178,16 +181,43 @@ const activeProgressType = ref("daily");
 
 // Sample activities
 const activities = ref([
-  { id: 1, title: "20min Meditation", duration: 21, status: "done" },
-  { id: 2, title: "Morning Yoga", duration: 32, status: "done" },
-  { id: 3, title: "Read a book", duration: 15, status: "pending" },
+  {
+    id: 1,
+    title: "Doing Yoga",
+    duration: 30,
+    status: "done",
+    timeActive: "2025-03-30T07:00:00Z",
+    timeDone: "2025-03-30T07:30:00Z",
+    dateCreated: "2025-03-29T09:00:00Z",
+    points: 20, // 20% of the total points
+  },
+  {
+    id: 2,
+    title: "Evening Running",
+    duration: 45,
+    status: "expired",
+    timeActive: null, // Never active
+    timeDone: null, // Not completed
+    dateCreated: "2025-03-30T16:00:00Z",
+    points: 30, // 30% of the total points
+  },
+  {
+    id: 3,
+    title: "Reading A Book",
+    duration: 25,
+    status: "pending",
+    timeActive: null, // Not yet active
+    timeDone: null, // Not yet done
+    dateCreated: "2025-03-30T06:00:00Z",
+    points: 50, // 50% of the total points
+  },
 ]);
 
 const dialogVisible = ref(false);
 const selectedActivity = ref(null);
 
 function showDialog(activity) {
-  selectedActivity.value = activity;
+  selectedActivity.value = activity; // Store the entire activity object
   dialogVisible.value = true;
 }
 
