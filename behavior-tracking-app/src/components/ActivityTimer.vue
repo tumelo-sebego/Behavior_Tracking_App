@@ -60,23 +60,22 @@ const formattedTime = computed(() => {
   )}:${String(seconds).padStart(2, "0")}`;
 });
 
+// Start the timer to increment elapsedTime by 1 each second
 function startTimer() {
-  if (timer.value) return; // Prevent multiple intervals
-  startTime.value = new Date();
-  emit("active-state"); // Emit active state when the timer starts
-  timer.value = setInterval(() => {
-    elapsedTime.value += 1;
-  }, 1000);
+  if (!timer.value) {
+    startTime.value = Date.now();
+    timer.value = setInterval(() => {
+      elapsedTime.value += 1; // Increment elapsedTime by 1 each second
+    }, 1000);
+  }
 }
 
-function finishTimer() {
-  clearInterval(timer.value);
-  timer.value = null;
-  emit("complete", {
-    duration: elapsedTime.value, // Emit the elapsed time as the duration
-    startTime: startTime.value,
-    endTime: new Date(),
-  });
+// Stop the timer
+function stopTimer() {
+  if (timer.value) {
+    clearInterval(timer.value);
+    timer.value = null;
+  }
 }
 
 function onClose() {
@@ -101,6 +100,51 @@ watch(
   },
   { immediate: true }, // Run the watcher immediately when the component is created
 );
+
+// Helper function to add ordinal suffix to the day
+function getOrdinalSuffix(day) {
+  if (day > 3 && day < 21) return "th"; // Covers 11th to 19th
+  switch (day % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
+}
+
+// Computed property to format the dateCreated
+const formattedDateCreated = computed(() => {
+  if (!props.dateCreated) return "N/A";
+  const date = new Date(props.dateCreated);
+  const day = date.getDate();
+  const month = date.toLocaleString("en-US", { month: "long" });
+  return `${day}${getOrdinalSuffix(day)} ${month}`;
+});
+
+// Computed property to format timeActive
+const formattedTimeActive = computed(() => {
+  if (!props.timeActive) return "N/A";
+  const date = new Date(props.timeActive);
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+});
+
+// Computed property to format timeDone
+const formattedTimeDone = computed(() => {
+  if (!props.timeDone) return "N/A";
+  const date = new Date(props.timeDone);
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+});
+
+// Reactive state for action button
+const isClicked = ref(false);
 </script>
 
 <template>
@@ -128,30 +172,55 @@ watch(
       </div>
       <h2 class="dialog-title">{{ title }}</h2>
       <div class="timer-display">{{ formattedTime }}</div>
-      <div class="activity-status">
-        <span>Status: {{ status }}</span>
+
+      <!-- Activity Points Pill -->
+      <div class="activity-points-pill">
+        <div class="bolt-icon-group">
+          <i class="pi pi-bolt bolt-icon"></i>
+          <span class="points-text">Activity Points</span>
+        </div>
+        <div class="points-group">
+          <span class="vertical-line"></span>
+          <span class="points-value">{{ points }}</span>
+        </div>
       </div>
-      <div class="activity-points">
-        <span>Points: {{ points }}</span>
+
+      <!-- Activity Details Pill -->
+      <div class="activity-details-pill">
+        <div class="details-group">
+          <i class="pi pi-calendar calendar-icon"></i>
+          <span class="details-date">{{ formattedDateCreated }}</span>
+        </div>
+        <div class="details-group">
+          <span class="vertical-line"></span>
+          <span class="details-time">{{ formattedTimeActive }}</span>
+          <span>-</span>
+          <span class="details-time">{{ formattedTimeDone }}</span>
+        </div>
       </div>
-      <div class="activity-details">
-        <p>Time Active: {{ timeActive || "N/A" }}</p>
-        <p>Time Done: {{ timeDone || "N/A" }}</p>
-        <p>Date Created: {{ dateCreated }}</p>
+
+      <!-- Activity Status Pill -->
+      <div class="activity-status-pill">
+        <div class="status-group">
+          <span
+            class="status-dot"
+            :class="{
+              pending: status === 'pending',
+              active: status === 'active',
+              done: status === 'done',
+              expired: status === 'expired',
+            }"></span>
+          <span class="status-text">{{ status }}</span>
+        </div>
       </div>
-      <div class="action-buttons">
-        <Button
-          v-if="status === 'pending'"
-          label="Start"
-          icon="pi pi-play"
-          class="p-button-success"
-          @click="startTimer" />
-        <Button
-          v-if="status === 'active'"
-          label="Done"
-          icon="pi pi-check"
-          class="p-button-primary"
-          @click="finishTimer" />
+
+      <!-- Action Buttons Pill -->
+      <div
+        v-if="status === 'pending' || status === 'active'"
+        class="action-buttons-pill"
+        :class="{ clicked: isClicked }"
+        @click="isClicked ? stopTimer() : startTimer()">
+        <span class="action-text">{{ isClicked ? "Finish" : "Start" }}</span>
       </div>
     </div>
   </Dialog>
@@ -330,5 +399,180 @@ watch(
 
 .action-buttons {
   margin-top: 2rem;
+}
+
+/* Add styles for the activity points pill */
+.activity-points-pill {
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  background-color: #e6e7e9;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Space between left and right groups */
+  width: 100%; /* Full width */
+  color: #232323;
+}
+
+.bolt-icon-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Space between the bolt icon and text */
+}
+
+.points-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Space between the vertical line and points */
+}
+
+.bolt-icon {
+  color: #fbbf24; /* Yellow color for the bolt icon */
+  font-size: 1.2rem;
+}
+
+.points-text {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.vertical-line {
+  width: 2px; /* Increased width to match activity-points-pill */
+  height: 1.5rem;
+  background-color: #232323;
+}
+
+.points-value {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* Add styles for the activity details pill */
+.activity-details-pill {
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  background-color: #e6e7e9;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Space between left and right groups */
+  width: 100%; /* Full width */
+  color: #232323;
+}
+
+.details-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Space between the icon and text */
+}
+
+.calendar-icon {
+  color: #4299e1; /* Blue color for the calendar icon */
+  font-size: 1.2rem;
+}
+
+.details-date,
+.details-time {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Add styles for the activity status pill */
+.activity-status-pill {
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  background-color: #e6e7e9;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%; /* Full width */
+  color: #232323;
+}
+
+.status-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Space between the dot and the text */
+}
+
+.status-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background-color: #d1d5db; /* Default gray color */
+}
+
+.status-dot.pending {
+  background-color: #4299e1; /* Blue for pending */
+}
+
+.status-dot.active {
+  background-color: #f472b6; /* Pink for active */
+}
+
+.status-dot.done {
+  background-color: #50a65d; /* Green for done */
+}
+
+.status-dot.expired {
+  background-color: #e53e3e; /* Red for expired */
+}
+
+.status-text {
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: capitalize; /* Capitalize the status text */
+}
+
+/* Updated styles for all pill containers */
+.activity-points-pill,
+.activity-details-pill,
+.activity-status-pill {
+  margin-top: 0; /* Remove margin-top */
+  margin-bottom: 1rem; /* Add margin-bottom */
+  padding: 0.5rem 1rem;
+  background-color: #e6e7e9;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Space between left and right groups */
+  width: 100%; /* Full width */
+  color: #232323;
+}
+
+/* Styles for the action buttons pill */
+.action-buttons-pill {
+  margin: 1rem 0; /* Keep the existing margin */
+  padding: 0.5rem 1rem;
+  background-color: #50a65d;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%; /* Full width */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.action-buttons-pill.clicked {
+  background-color: #232323;
+  color: #50a65d;
+}
+
+.action-text {
+  font-size: 1rem;
+  font-weight: 500;
 }
 </style>
