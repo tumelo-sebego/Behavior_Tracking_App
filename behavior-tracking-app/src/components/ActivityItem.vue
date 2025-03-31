@@ -88,7 +88,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onUnmounted, watch } from "vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 
@@ -125,20 +125,40 @@ const statusText = computed(() => {
 const isClockFilled = ref(true);
 let clockInterval = null;
 
-// Start the interval when the component is mounted
-onMounted(() => {
-  if (props.status === "active") {
+// Function to start the blinking logic
+function startBlinking() {
+  if (!clockInterval) {
     clockInterval = setInterval(() => {
       isClockFilled.value = !isClockFilled.value; // Toggle the clock icon
     }, 500); // Half a second
   }
-});
+}
+
+// Function to stop the blinking logic
+function stopBlinking() {
+  if (clockInterval) {
+    clearInterval(clockInterval);
+    clockInterval = null;
+    isClockFilled.value = false; // Reset to filled state
+  }
+}
+
+// Watch the status prop to start/stop blinking dynamically
+watch(
+  () => props.status,
+  (newStatus) => {
+    if (newStatus === "active") {
+      startBlinking();
+    } else {
+      stopBlinking();
+    }
+  },
+  { immediate: true }, // Run the watcher immediately when the component is created
+);
 
 // Clear the interval when the component is unmounted
 onUnmounted(() => {
-  if (clockInterval) {
-    clearInterval(clockInterval);
-  }
+  stopBlinking();
 });
 </script>
 
@@ -354,7 +374,6 @@ onUnmounted(() => {
 
 /* Filled clock icon */
 .active-icon-filled {
-  color: #4299e1; /* Blue color for the filled clock */
   font-size: 1.25rem;
   background-color: rgb(80 166 93); /* Same color as the icon */
   border-radius: 50%; /* Make it circular */
