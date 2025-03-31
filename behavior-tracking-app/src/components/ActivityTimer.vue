@@ -185,7 +185,7 @@ const isClicked = ref(false);
         </div>
         <div class="points-group">
           <span class="vertical-line"></span>
-          <span class="points-value">{{ points }}</span>
+          <span class="points-value">{{ points }}%</span>
         </div>
       </div>
 

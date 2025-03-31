@@ -175,7 +175,6 @@ const email = ref("");
 const password = ref("");
 const username = ref("Tumelo");
 const activeTab = ref("home");
-const progress = ref(20);
 const date = ref("");
 const activeProgressType = ref("daily");
 
@@ -271,6 +270,13 @@ const handleNavigate = (tab) => {
 const handleProgressTypeChange = (type) => {
   activeProgressType.value = type;
 };
+
+// Compute progress based on activities with a status of "done"
+const progress = computed(() => {
+  return activities.value
+    .filter((activity) => activity.status === "done")
+    .reduce((total, activity) => total + activity.points, 0);
+});
 
 function handleComplete(elapsedTime, timeDone) {
   if (selectedActivity.value) {
