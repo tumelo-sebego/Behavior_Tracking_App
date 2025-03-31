@@ -98,7 +98,7 @@ watch(
   () => [props.duration, props.status],
   ([newDuration, newStatus]) => {
     if (newStatus === "expired" || newStatus === "done") {
-      elapsedTime.value = newDuration * 60; // Set elapsedTime based on duration
+      elapsedTime.value = newDuration;
     } else {
       elapsedTime.value = 0; // Reset to 0 for other statuses
     }
