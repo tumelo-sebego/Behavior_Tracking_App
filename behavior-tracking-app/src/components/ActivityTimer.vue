@@ -147,6 +147,14 @@ const formattedTimeDone = computed(() => {
   return `${hours}:${minutes}`;
 });
 
+// Computed property to format the created date
+const formattedCreatedDate = computed(() => {
+  const date = new Date(props.dateCreated);
+  const day = date.getDate();
+  const month = date.toLocaleString("en-US", { month: "long" });
+  return `${day}${getOrdinalSuffix(day)} ${month}`;
+});
+
 // Reactive state for action button
 const isClicked = ref(false);
 </script>
@@ -195,9 +203,13 @@ const isClicked = ref(false);
         class="activity-details-pill">
         <div class="details-group">
           <i class="pi pi-calendar calendar-icon"></i>
-          <span class="details-date">{{ formattedStartDate }}</span>
+          <span class="details-date">
+            {{
+              status === "expired" ? formattedCreatedDate : formattedStartDate
+            }}</span
+          >
         </div>
-        <div class="details-group">
+        <div v-if="status !== 'expired'" class="details-group">
           <span class="vertical-line"></span>
           <span class="details-time">{{ formattedTimeActive }}</span>
           <span>-</span>
@@ -509,8 +521,8 @@ const isClicked = ref(false);
 }
 
 .status-dot {
-  width: 0.75rem;
-  height: 0.75rem;
+  width: 1rem;
+  height: 1rem;
   border-radius: 50%;
   background-color: #d1d5db; /* Default gray color */
 }
@@ -528,7 +540,7 @@ const isClicked = ref(false);
 }
 
 .status-dot.expired {
-  background-color: #e53e3e; /* Red for expired */
+  background-color: #232323; /* Red for expired */
 }
 
 .status-text {
