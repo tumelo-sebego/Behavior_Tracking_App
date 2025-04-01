@@ -25,6 +25,10 @@
         <template v-if="status === 'active'">
           <div class="step"></div>
         </template>
+        <template v-if="status === 'expired'">
+          <!-- Circle for expired activities -->
+          <div class="expired-circle"></div>
+        </template>
         <template v-else>
           <span class="duration-value">
             {{ duration < 60 ? duration : Math.floor(duration / 60) }}
@@ -420,5 +424,20 @@ onUnmounted(() => {
     opacity: 0; /* Fully fade out */
     transform: scale(2); /* Expand to a larger circle */
   }
+}
+
+.expired-circle {
+  font-size: 1rem;
+  font-weight: 500;
+  background-color: #232323; /* Light background */
+  border-radius: 50%; /* Make it circular */
+  width: 1rem; /* Adjust size to match the design */
+  height: 1rem; /* Adjust size to match the design */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  color: #232323; /* Text color */
+  margin: 0 auto; /* Center the circle */
 }
 </style>

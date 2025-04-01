@@ -532,7 +532,7 @@ const isClicked = ref(false);
 }
 
 .status-dot.active {
-  background-color: #f472b6; /* Pink for active */
+  background-color: #bf2f91; /* Pink for active */
 }
 
 .status-dot.done {
