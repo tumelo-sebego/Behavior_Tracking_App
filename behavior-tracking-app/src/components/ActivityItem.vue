@@ -29,7 +29,7 @@
           <!-- Circle for expired activities -->
           <div class="expired-circle"></div>
         </template>
-        <template v-else>
+        <template v-if="status != 'expired' && status !== 'active'">
           <span class="duration-value">
             {{ duration < 60 ? duration : Math.floor(duration / 60) }}
           </span>
@@ -241,11 +241,11 @@ onUnmounted(() => {
 }
 
 .status-active {
-  background-color: #fbbf24;
+  background-color: #bf2f91;
 }
 
 .status-active + .status-text {
-  color: #fbbf24;
+  color: #bf2f91;
 }
 
 .separator {
@@ -378,9 +378,9 @@ onUnmounted(() => {
   align-items: center;
   height: 20px; /* Size of the circle */
   width: 20px; /* Size of the circle */
-  border: 4px solid #50a65d; /* Border color */
+  border: 4px solid #bf2f91; /* Border color */
   border-radius: 50%; /* Make it circular */
-  background: #50a65d; /* Initial filled color */
+  background: #bf2f91; /* Initial filled color */
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25); /* Add a subtle shadow */
   z-index: 1; /* Ensure it appears above the ripple */
 }
@@ -399,7 +399,7 @@ onUnmounted(() => {
   content: "";
   height: 200%;
   width: 200%;
-  background: #50a65d;
+  background: #bf2f91;
   border-radius: 100%;
   -webkit-animation-name: ripple;
   animation-name: ripple;
