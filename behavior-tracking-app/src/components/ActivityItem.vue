@@ -23,12 +23,7 @@
           <i class="pi pi-clock pending-icon"></i>
         </template>
         <template v-if="status === 'active'">
-          <i
-            :class="
-              isClockFilled
-                ? 'pi pi-clock active-icon-filled'
-                : 'pi pi-clock active-icon-outlined'
-            "></i>
+          <div class="step"></div>
         </template>
         <template v-else>
           <span class="duration-value">
@@ -372,24 +367,58 @@ onUnmounted(() => {
   margin-top: 2rem;
 }
 
-/* Filled clock icon */
-.active-icon-filled {
-  font-size: 1.25rem;
-  background-color: rgb(80 166 93); /* Same color as the icon */
+.step {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20px; /* Size of the circle */
+  width: 20px; /* Size of the circle */
+  border: 4px solid #50a65d; /* Border color */
   border-radius: 50%; /* Make it circular */
-  padding: 0.2rem; /* Add padding to simulate a filled effect */
-  box-sizing: content-box; /* Ensure padding is part of the icon */
-  color: #e6e7e9;
+  background: #50a65d; /* Initial filled color */
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25); /* Add a subtle shadow */
+  z-index: 1; /* Ensure it appears above the ripple */
 }
 
-/* Outlined clock icon */
-.active-icon-outlined {
-  color: #4299e1; /* Blue color for the outlined clock */
-  font-size: 1.25rem;
-  border: 2px solid rgb(80 166 93); /* Add a border to simulate an outline */
-  border-radius: 50%; /* Make it circular */
-  padding: 0.2rem; /* Add padding to simulate spacing */
-  box-sizing: content-box; /* Ensure padding is part of the icon */
-  background-color: transparent; /* Transparent background for outline */
+.step::after {
+  opacity: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: 0;
+  bottom: 0;
+  content: "";
+  height: 200%;
+  width: 200%;
+  background: #50a65d;
+  border-radius: 100%;
+  -webkit-animation-name: ripple;
+  animation-name: ripple;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-timing-function: cubic-bezier(0.65, 0, 0.34, 1);
+  animation-timing-function: cubic-bezier(0.65, 0, 0.34, 1);
+  z-index: -1;
+}
+
+/* Ripple animation */
+@keyframes ripple {
+  from {
+    opacity: 1; /* Fully visible at the start */
+    transform: scale(0.75); /* Start as a smaller circle */
+  }
+  to {
+    opacity: 0; /* Fully fade out */
+    transform: scale(2); /* Expand to a larger circle */
+  }
 }
 </style>
