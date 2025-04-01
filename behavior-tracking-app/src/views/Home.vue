@@ -79,6 +79,7 @@
               :time-active="selectedActivity.timeActive"
               :time-done="selectedActivity.timeDone"
               :date-created="selectedActivity.dateCreated"
+              :has-active-activity="hasActiveActivity"
               @active-state="handleActiveState"
               @complete="handleComplete" />
           </template>
@@ -210,6 +211,16 @@ const activities = ref([
     dateCreated: "2025-03-30T06:00:00Z",
     points: 50, // 50% of the total points
   },
+  {
+    id: 4,
+    title: "Morning Meditation",
+    duration: null,
+    status: "pending",
+    timeActive: null, // Not yet active
+    timeDone: null, // Not yet done
+    dateCreated: "2025-03-31T06:00:00Z",
+    points: 40, // 40% of the total points
+  },
 ]);
 
 const dialogVisible = ref(false);
@@ -284,6 +295,14 @@ const handleNavigate = (tab) => {
 const handleProgressTypeChange = (type) => {
   activeProgressType.value = type;
 };
+
+const hasActiveActivity = computed(() => {
+  console.log(
+    "Checking for active activities...",
+    activities.value.some((activity) => activity.status === "active"),
+  );
+  return activities.value.some((activity) => activity.status === "active");
+});
 
 // Compute progress based on activities with a status of "done"
 const progress = computed(() => {

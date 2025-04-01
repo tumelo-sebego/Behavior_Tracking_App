@@ -42,12 +42,17 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  hasActiveActivity: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 const emit = defineEmits(["update:visible", "complete", "active-state"]);
 
 const elapsedTime = ref(0); // Always start at 0
 const timer = ref(null);
+const isClicked = ref(false);
 const startTime = ref(null);
 
 const formattedTime = computed(() => {
@@ -93,14 +98,27 @@ onUnmounted(() => {
   }
 });
 
+// Reset the timer when switching activities
+function resetTimer() {
+  if (timer.value) {
+    clearInterval(timer.value);
+    timer.value = null;
+  }
+  elapsedTime.value = props.duration || 0;
+  isClicked.value = props.status === "active";
+}
+
 // Watch for changes in props.duration and props.status to reset elapsedTime
 watch(
   () => [props.duration, props.status],
   ([newDuration, newStatus]) => {
     if (newStatus === "expired" || newStatus === "done") {
       elapsedTime.value = newDuration;
+    } else if (newStatus === "active") {
+      elapsedTime.value = newDuration || 0;
+      isClicked.value = true;
     } else {
-      elapsedTime.value = 0; // Reset to 0 for other statuses
+      resetTimer();
     }
   },
   { immediate: true }, // Run the watcher immediately when the component is created
@@ -156,7 +174,6 @@ const formattedCreatedDate = computed(() => {
 });
 
 // Reactive state for action button
-const isClicked = ref(false);
 </script>
 
 <template>
@@ -236,9 +253,14 @@ const isClicked = ref(false);
       <div
         v-if="status === 'pending' || status === 'active'"
         class="action-buttons-pill"
-        :class="{ clicked: isClicked }"
+        :class="{
+          clicked: isClicked,
+          disabled: hasActiveActivity && status == 'pending',
+        }"
         @click="isClicked ? stopTimer() : startTimer()">
-        <span class="action-text">{{ isClicked ? "Finish" : "Start" }}</span>
+        <span class="action-text">{{
+          isClicked && status == "active" ? "Finish" : "Start"
+        }}</span>
       </div>
     </div>
   </Dialog>
@@ -587,6 +609,13 @@ const isClicked = ref(false);
 .action-buttons-pill.clicked {
   background-color: #232323;
   color: #e5e7eb;
+}
+
+.action-buttons-pill.disabled {
+  background-color: #d1d5db; /* Gray background for disabled state */
+  color: #9ca3af; /* Light gray text for disabled state */
+  cursor: not-allowed; /* Change cursor to indicate disabled state */
+  pointer-events: none; /* Prevent any interaction */
 }
 
 .action-text {
