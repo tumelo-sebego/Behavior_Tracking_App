@@ -220,6 +220,20 @@ function showDialog(activity) {
   dialogVisible.value = true;
 }
 
+function getOrdinalSuffix(day) {
+  if (day >= 11 && day <= 13) return "th"; // Handle special cases for 11th, 12th, 13th
+  switch (day % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
+}
+
 const progressTypeMessage = computed(() => {
   switch (activeProgressType.value) {
     case "daily":
@@ -296,12 +310,12 @@ function handleActiveState(timeActive) {
 onMounted(() => {
   // Format current date
   const today = new Date();
-  const options = {
-    weekday: "short",
-    day: "2-digit",
-    month: "long",
-  };
-  date.value = today.toLocaleDateString("en-US", options);
+  const day = today.getDate();
+  const weekday = today.toLocaleDateString("en-US", { weekday: "long" });
+  const month = today.toLocaleDateString("en-US", { month: "long" });
+
+  // Add the ordinal suffix to the day
+  date.value = `${weekday}, ${month} ${day}${getOrdinalSuffix(day)}`;
 
   checkAuth();
   if (isAuthenticated.value) {
