@@ -59,7 +59,7 @@
                 v-for="activity in store.activities"
                 :key="activity.id"
                 :id="activity.id"
-                @open-dialog="showDialog(activity)" />
+                @open-dialog="showDialog" />
             </div>
 
             <!-- ActivityTimer dialog -->
@@ -67,8 +67,7 @@
               v-if="selectedActivityId"
               v-model:visible="dialogVisible"
               :id="selectedActivityId"
-              @active-state="handleActiveState"
-              @complete="handleComplete" />
+              @active-state="handleActiveState" />
           </template>
 
           <template v-else-if="activeTab === 'calendar'">
@@ -171,8 +170,9 @@ const store = useActivitiesStore();
 const dialogVisible = ref(false);
 const selectedActivityId = ref(null);
 
-function showDialog(activity) {
-  selectedActivityId.value = activity.id; // Store the entire activity object
+function showDialog(activityId) {
+  console.log("Selected Activity ID:", activityId);
+  selectedActivityId.value = activityId; // Store the entire activity object
   dialogVisible.value = true;
 }
 
@@ -247,18 +247,6 @@ const progress = computed(() => {
     .filter((activity) => activity.status === "done")
     .reduce((total, activity) => total + activity.points, 0);
 });
-
-// function handleComplete(elapsedTime, timeDone) {
-//   if (selectedActivityId.value) {
-//     store.stopActivity(selectedActivityId.value, elapsedTime);
-//   }
-// }
-
-// function handleActiveState(timeActive) {
-//   if (selectedActivityId.value) {
-//     store.startActivity(selectedActivityId.value);
-//   }
-// }
 
 onMounted(() => {
   // Format current date

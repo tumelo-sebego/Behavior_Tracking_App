@@ -1,5 +1,5 @@
 <template>
-  <div class="activity-item" @click="$emit('open-dialog', activity)">
+  <div class="activity-item" @click="$emit('open-dialog', activity.id)">
     <div class="activity-content">
       <div class="activity-info">
         <div class="title">{{ activity.title }}</div>
@@ -27,8 +27,7 @@
           <!-- Circle for expired activities -->
           <div class="expired-circle"></div>
         </template>
-        <template
-          v-if="activity.status != 'expired' && activity.status !== 'active'">
+        <template v-if="activity.status == 'done'">
           <span class="duration-value">
             {{
               activity.duration < 60

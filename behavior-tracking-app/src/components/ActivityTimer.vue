@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onUnmounted, watch } from "vue";
+import { ref, computed, onUnmounted, onMounted, watch } from "vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import { useActivitiesStore } from "@/store/activities";
@@ -9,45 +9,58 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  visible: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 const store = useActivitiesStore();
 const activity = computed(() => store.getActivityById(props.id));
-const elapsedTime = ref(activity.value.duration || 0);
+// const elapsedTime = ref(activity.value.duration || 0);
+
+// Variables for elapsed time and active elapsed time
+const elapsedTime = ref(0);
+const activeElapsedTime = ref(0); // Background counter for active activities
 
 const emit = defineEmits(["update:visible", "complete", "active-state"]);
 
 const timer = ref(null);
-const isClicked = ref(false);
-const startTime = ref(null);
 
 const formattedTime = computed(() => {
-  const hours = Math.floor(elapsedTime.value / 3600);
-  const minutes = Math.floor((elapsedTime.value % 3600) / 60);
-  const seconds = Math.floor(elapsedTime.value % 60);
+  const valueTime =
+    activity.value.status === "active"
+      ? store.activeElapsedTime
+      : activity.value.duration || 0;
+
+  const hours = Math.floor(valueTime / 3600);
+  const minutes = Math.floor((valueTime % 3600) / 60);
+  const seconds = Math.floor(valueTime % 60);
   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
     2,
     "0",
   )}:${String(seconds).padStart(2, "0")}`;
 });
 
-// Start the timer to increment elapsedTime by 1 each second
-function startTimer() {
-  if (!timer.value) {
-    store.startActivity(props.id);
-    timer.value = setInterval(() => {
-      elapsedTime.value += 1;
-    }, 1000);
+// Initialize elapsedTime based on activity status
+function initializeElapsedTime() {
+  if (activity.value.status === "active") {
+    elapsedTime.value = activeElapsedTime.value;
+  } else if (activity.value.status === "done") {
+    elapsedTime.value = activity.value.duration || 0;
+  } else {
+    elapsedTime.value = 0;
   }
 }
 
-// Stop the timer
+// Start and stop the timer
+function startTimer() {
+  console.log("Starting timer...");
+  store.startActivity(activity.value.id);
+}
+
 function stopTimer() {
-  if (timer.value) {
-    clearInterval(timer.value);
-    timer.value = null;
-    store.stopActivity(props.id, elapsedTime.value);
-  }
+  store.stopActivity(activity.value.id);
 }
 
 function onClose() {
@@ -60,30 +73,10 @@ onUnmounted(() => {
   }
 });
 
-// Reset the timer when switching activities
-function resetTimer() {
-  if (timer.value) {
-    clearInterval(timer.value);
-    timer.value = null;
-  }
-  elapsedTime.value = props.duration || 0;
-  isClicked.value = props.status === "active";
-}
-
-// Watch for changes in props.duration and props.status to reset elapsedTime
-watch(
-  () => activity.value.status,
-  (newStatus) => {
-    if (newStatus !== "active" && timer.value) {
-      clearInterval(timer.value);
-      timer.value = null;
-    }
-    if (newStatus === "active") {
-      elapsedTime.value = activity.value.duration || 0;
-    }
-  },
-  { immediate: true },
-);
+// Call initializeElapsedTime when the component is mounted
+onMounted(() => {
+  initializeElapsedTime();
+});
 
 // Helper function to add ordinal suffix to the day
 function getOrdinalSuffix(day) {
@@ -134,6 +127,13 @@ const formattedCreatedDate = computed(() => {
   return `${day}${getOrdinalSuffix(day)} ${month}`;
 });
 
+watch(
+  () => activity.value.id,
+  () => {
+    initializeElapsedTime(); // Reinitialize elapsedTime when activity status changes
+  },
+);
+
 // Reactive state for action button
 </script>
 
@@ -155,13 +155,16 @@ const formattedCreatedDate = computed(() => {
       borderRadius: '0',
     }"
     position="top"
-    class="activity-dialog">
+    class="activity-dialog"
+    transition="dialog">
     <div class="dialog-wrapper" :class="{ 'dialog-enter-active': visible }">
       <div class="close-button-container">
         <Button icon="pi pi-times" @click="onClose" text class="close-button" />
       </div>
       <h2 class="dialog-title">{{ activity.title }}</h2>
-      <div class="timer-display">{{ formattedTime }}</div>
+      <div class="timer-display">
+        {{ formattedTime }}
+      </div>
 
       <!-- Activity Points Pill -->
       <div class="activity-points-pill">
@@ -177,7 +180,7 @@ const formattedCreatedDate = computed(() => {
 
       <!-- Activity Details Pill -->
       <div
-        v-if="activity.status !== 'pending' && activity.status !== 'active'"
+        v-if="activity.status == 'expired' && activity.status == 'done'"
         class="activity-details-pill">
         <div class="details-group">
           <i class="pi pi-calendar calendar-icon"></i>
@@ -208,7 +211,7 @@ const formattedCreatedDate = computed(() => {
               done: activity.status === 'done',
               expired: activity.status === 'expired',
             }"></span>
-          <span class="status-text">{{ status }}</span>
+          <span class="status-text">{{ activity.status }}</span>
         </div>
       </div>
 
@@ -217,7 +220,8 @@ const formattedCreatedDate = computed(() => {
         v-if="activity.status === 'pending' || activity.status === 'active'"
         class="action-buttons-pill"
         :class="{
-          disabled: activity.hasActiveActivity && activity.status == 'pending',
+          clicked: activity.status === 'active',
+          disabled: store.hasActiveActivity && activity.status == 'pending',
         }"
         @click="activity.status === 'active' ? stopTimer() : startTimer()">
         <span class="action-text">{{
@@ -322,18 +326,25 @@ const formattedCreatedDate = computed(() => {
 
 :deep(.p-dialog-mask) {
   background-color: rgb(250 251 231);
+  pointer-events: auto !important; /* Ensure the dialog is interactive */
 }
 
 :deep(.p-dialog) {
+  background-color: white !important;
   margin: 0;
+  color: #232323;
+  overflow: visible;
+  pointer-events: auto !important; /* Ensure the dialog is interactive */
   height: 100vh;
   max-height: 100vh;
   border-radius: 0;
+  z-index: 1050 !important;
 }
 
 :deep(.p-dialog-content) {
   padding: 0;
   background-color: rgb(250 251 231);
+  overflow: visible !important;
 }
 
 :deep(.p-dialog-header) {
