@@ -1,40 +1,43 @@
 <template>
-  <div
-    class="activity-item"
-    @click="$emit('open-dialog', { title, duration, status })">
+  <div class="activity-item" @click="$emit('open-dialog', activity)">
     <div class="activity-content">
       <div class="activity-info">
-        <div class="title">{{ title }}</div>
+        <div class="title">{{ activity.title }}</div>
         <div class="status-row">
           <div
             class="status-indicator"
             :class="{
-              'status-done': status === 'done',
-              'status-pending': status === 'pending',
-              'status-expired': status === 'expired',
-              'status-active': status === 'active',
+              'status-done': activity.status === 'done',
+              'status-pending': activity.status === 'pending',
+              'status-expired': activity.status === 'expired',
+              'status-active': activity.status === 'active',
             }"></div>
           <span class="status-text">{{ statusText }}</span>
         </div>
       </div>
       <div class="separator"></div>
       <div class="duration-container">
-        <template v-if="status === 'pending'">
+        <template v-if="activity.status === 'pending'">
           <i class="pi pi-clock pending-icon"></i>
         </template>
-        <template v-if="status === 'active'">
+        <template v-if="activity.status === 'active'">
           <div class="step"></div>
         </template>
-        <template v-if="status === 'expired'">
+        <template v-if="activity.status === 'expired'">
           <!-- Circle for expired activities -->
           <div class="expired-circle"></div>
         </template>
-        <template v-if="status != 'expired' && status !== 'active'">
+        <template
+          v-if="activity.status != 'expired' && activity.status !== 'active'">
           <span class="duration-value">
-            {{ duration < 60 ? duration : Math.floor(duration / 60) }}
+            {{
+              activity.duration < 60
+                ? activity.duration
+                : Math.floor(activity.duration / 60)
+            }}
           </span>
           <span class="duration-unit">
-            {{ duration < 60 ? "sec" : "min" }}
+            {{ activity.duration < 60 ? "sec" : "min" }}
           </span>
         </template>
       </div>
@@ -67,17 +70,17 @@
             text
             class="close-button" />
         </div>
-        <h2 class="dialog-title">{{ title }}</h2>
+        <h2 class="dialog-title">{{ activity.title }}</h2>
         <div class="timer-display">00:00:00</div>
         <div class="activity-points">
-          <span>Activity Points: {{ duration }}</span>
+          <span>Activity Points: {{ activity.duration }}</span>
         </div>
         <div class="activity-status">
           <span>Status: {{ statusText }}</span>
         </div>
         <div class="action-buttons">
           <Button
-            v-if="status === 'pending'"
+            v-if="activity.status === 'pending'"
             label="Start"
             class="p-button-success" />
         </div>
@@ -90,23 +93,17 @@
 import { ref, computed, onUnmounted, watch } from "vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
+import { useActivitiesStore } from "@/store/activities";
 
 const props = defineProps({
-  title: {
-    type: String,
-    required: true,
-  },
-  duration: {
+  id: {
     type: Number,
     required: true,
   },
-  status: {
-    type: String,
-    required: true,
-    validator: (value) =>
-      ["done", "pending", "expired", "active"].includes(value),
-  },
 });
+
+const store = useActivitiesStore();
+const activity = computed(() => store.getActivityById(props.id));
 
 const dialogVisible = ref(false);
 
@@ -117,7 +114,7 @@ const statusText = computed(() => {
     expired: "Expired",
     active: "Active",
   };
-  return statusMap[props.status];
+  return statusMap[activity.value.status];
 });
 
 // Reactive state for toggling the clock icon
@@ -144,7 +141,7 @@ function stopBlinking() {
 
 // Watch the status prop to start/stop blinking dynamically
 watch(
-  () => props.status,
+  () => activity.value.status,
   (newStatus) => {
     if (newStatus === "active") {
       startBlinking();

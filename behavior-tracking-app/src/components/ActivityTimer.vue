@@ -2,55 +2,21 @@
 import { ref, computed, onUnmounted, watch } from "vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
+import { useActivitiesStore } from "@/store/activities";
 
 const props = defineProps({
-  title: {
-    type: String,
-    required: true,
-  },
-  visible: {
-    type: Boolean,
-    required: true,
-  },
-  duration: {
+  id: {
     type: Number,
-    required: false, // Make duration optional
-    default: null, // Default to null when not provided
-    validator: (value) => value === null || value >= 0, // Validate if provided
-  },
-  status: {
-    type: String,
-    required: true,
-    validator: (value) =>
-      ["pending", "active", "expired", "done"].includes(value),
-  },
-  points: {
-    type: Number,
-    required: true,
-  },
-  timeActive: {
-    type: String,
-    required: false,
-    default: null,
-  },
-  timeDone: {
-    type: String,
-    required: false,
-    default: null,
-  },
-  dateCreated: {
-    type: String,
-    required: true,
-  },
-  hasActiveActivity: {
-    type: Boolean,
     required: true,
   },
 });
 
+const store = useActivitiesStore();
+const activity = computed(() => store.getActivityById(props.id));
+const elapsedTime = ref(activity.value.duration || 0);
+
 const emit = defineEmits(["update:visible", "complete", "active-state"]);
 
-const elapsedTime = ref(0); // Always start at 0
 const timer = ref(null);
 const isClicked = ref(false);
 const startTime = ref(null);
@@ -68,13 +34,10 @@ const formattedTime = computed(() => {
 // Start the timer to increment elapsedTime by 1 each second
 function startTimer() {
   if (!timer.value) {
-    startTime.value = Date.now();
+    store.startActivity(props.id);
     timer.value = setInterval(() => {
-      elapsedTime.value += 1; // Increment elapsedTime by 1 each second
+      elapsedTime.value += 1;
     }, 1000);
-    // Change status to active
-    emit("active-state", new Date().toISOString()); // Notify parent component to update the status
-    isClicked.value = true; // Update the button state
   }
 }
 
@@ -83,8 +46,7 @@ function stopTimer() {
   if (timer.value) {
     clearInterval(timer.value);
     timer.value = null;
-    emit("complete", elapsedTime.value, new Date().toISOString()); // Notify parent to change status to "done"
-    isClicked.value = false; // Reset the button state
+    store.stopActivity(props.id, elapsedTime.value);
   }
 }
 
@@ -110,18 +72,17 @@ function resetTimer() {
 
 // Watch for changes in props.duration and props.status to reset elapsedTime
 watch(
-  () => [props.duration, props.status],
-  ([newDuration, newStatus]) => {
-    if (newStatus === "expired" || newStatus === "done") {
-      elapsedTime.value = newDuration;
-    } else if (newStatus === "active") {
-      elapsedTime.value = newDuration || 0;
-      isClicked.value = true;
-    } else {
-      resetTimer();
+  () => activity.value.status,
+  (newStatus) => {
+    if (newStatus !== "active" && timer.value) {
+      clearInterval(timer.value);
+      timer.value = null;
+    }
+    if (newStatus === "active") {
+      elapsedTime.value = activity.value.duration || 0;
     }
   },
-  { immediate: true }, // Run the watcher immediately when the component is created
+  { immediate: true },
 );
 
 // Helper function to add ordinal suffix to the day
@@ -199,7 +160,7 @@ const formattedCreatedDate = computed(() => {
       <div class="close-button-container">
         <Button icon="pi pi-times" @click="onClose" text class="close-button" />
       </div>
-      <h2 class="dialog-title">{{ title }}</h2>
+      <h2 class="dialog-title">{{ activity.title }}</h2>
       <div class="timer-display">{{ formattedTime }}</div>
 
       <!-- Activity Points Pill -->
@@ -210,23 +171,25 @@ const formattedCreatedDate = computed(() => {
         </div>
         <div class="points-group">
           <span class="vertical-line"></span>
-          <span class="points-value">{{ points }}%</span>
+          <span class="points-value">{{ activity.points }}%</span>
         </div>
       </div>
 
       <!-- Activity Details Pill -->
       <div
-        v-if="status !== 'pending' && status !== 'active'"
+        v-if="activity.status !== 'pending' && activity.status !== 'active'"
         class="activity-details-pill">
         <div class="details-group">
           <i class="pi pi-calendar calendar-icon"></i>
           <span class="details-date">
             {{
-              status === "expired" ? formattedCreatedDate : formattedStartDate
+              activity.status === "expired"
+                ? formattedCreatedDate
+                : formattedStartDate
             }}</span
           >
         </div>
-        <div v-if="status !== 'expired'" class="details-group">
+        <div v-if="activity.status !== 'expired'" class="details-group">
           <span class="vertical-line"></span>
           <span class="details-time">{{ formattedTimeActive }}</span>
           <span>-</span>
@@ -240,10 +203,10 @@ const formattedCreatedDate = computed(() => {
           <span
             class="status-dot"
             :class="{
-              pending: status === 'pending',
-              active: status === 'active',
-              done: status === 'done',
-              expired: status === 'expired',
+              pending: activity.status === 'pending',
+              active: activity.status === 'active',
+              done: activity.status === 'done',
+              expired: activity.status === 'expired',
             }"></span>
           <span class="status-text">{{ status }}</span>
         </div>
@@ -251,15 +214,14 @@ const formattedCreatedDate = computed(() => {
 
       <!-- Action Buttons Pill -->
       <div
-        v-if="status === 'pending' || status === 'active'"
+        v-if="activity.status === 'pending' || activity.status === 'active'"
         class="action-buttons-pill"
         :class="{
-          clicked: isClicked,
-          disabled: hasActiveActivity && status == 'pending',
+          disabled: activity.hasActiveActivity && activity.status == 'pending',
         }"
-        @click="isClicked ? stopTimer() : startTimer()">
+        @click="activity.status === 'active' ? stopTimer() : startTimer()">
         <span class="action-text">{{
-          isClicked && status == "active" ? "Finish" : "Start"
+          activity.status === "active" ? "Finish" : "Start"
         }}</span>
       </div>
     </div>

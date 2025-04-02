@@ -56,30 +56,17 @@
 
             <div class="activities-container">
               <ActivityItem
-                v-for="activity in activities"
+                v-for="activity in store.activities"
                 :key="activity.id"
-                :title="activity.title"
-                :duration="activity.duration"
-                :status="activity.status"
-                :points="activity.points"
-                :time-active="activity.timeActive"
-                :time-done="activity.timeDone"
-                :date-created="activity.dateCreated"
+                :id="activity.id"
                 @open-dialog="showDialog(activity)" />
             </div>
 
             <!-- ActivityTimer dialog -->
             <ActivityTimer
-              v-if="selectedActivity"
+              v-if="selectedActivityId"
               v-model:visible="dialogVisible"
-              :title="selectedActivity.title"
-              :duration="selectedActivity.duration"
-              :status="selectedActivity.status"
-              :points="selectedActivity.points"
-              :time-active="selectedActivity.timeActive"
-              :time-done="selectedActivity.timeDone"
-              :date-created="selectedActivity.dateCreated"
-              :has-active-activity="hasActiveActivity"
+              :id="selectedActivityId"
               @active-state="handleActiveState"
               @complete="handleComplete" />
           </template>
@@ -159,6 +146,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
+import { useActivitiesStore } from "@/store/activities";
 import Card from "primevue/card";
 import InputText from "primevue/inputtext";
 import Password from "primevue/password";
@@ -178,56 +166,13 @@ const username = ref("Tumelo");
 const activeTab = ref("home");
 const date = ref("");
 const activeProgressType = ref("daily");
-
-// Sample activities
-const activities = ref([
-  {
-    id: 1,
-    title: "Doing Yoga",
-    duration: 30,
-    status: "done",
-    timeActive: "2025-03-30T07:00:00Z",
-    timeDone: "2025-03-30T07:30:00Z",
-    dateCreated: "2025-03-29T09:00:00Z",
-    points: 20, // 20% of the total points
-  },
-  {
-    id: 2,
-    title: "Evening Running",
-    duration: 45,
-    status: "expired",
-    timeActive: null, // Never active
-    timeDone: null, // Not completed
-    dateCreated: "2025-03-30T16:00:00Z",
-    points: 30, // 30% of the total points
-  },
-  {
-    id: 3,
-    title: "Reading A Book",
-    duration: null,
-    status: "pending",
-    timeActive: null, // Not yet active
-    timeDone: null, // Not yet done
-    dateCreated: "2025-03-30T06:00:00Z",
-    points: 50, // 50% of the total points
-  },
-  {
-    id: 4,
-    title: "Morning Meditation",
-    duration: null,
-    status: "pending",
-    timeActive: null, // Not yet active
-    timeDone: null, // Not yet done
-    dateCreated: "2025-03-31T06:00:00Z",
-    points: 40, // 40% of the total points
-  },
-]);
+const store = useActivitiesStore();
 
 const dialogVisible = ref(false);
-const selectedActivity = ref(null);
+const selectedActivityId = ref(null);
 
 function showDialog(activity) {
-  selectedActivity.value = activity; // Store the entire activity object
+  selectedActivityId.value = activity.id; // Store the entire activity object
   dialogVisible.value = true;
 }
 
@@ -277,9 +222,9 @@ const loadTasks = async () => {
   try {
     const response = await getTasks();
     if (response.data.message) {
-      activities.value = [];
+      // activities.value = [];
     } else {
-      activities.value = response.data;
+      // activities.value = response.data;
     }
     // Set progress immediately
     progress.value = 0;
@@ -296,35 +241,24 @@ const handleProgressTypeChange = (type) => {
   activeProgressType.value = type;
 };
 
-const hasActiveActivity = computed(() => {
-  console.log(
-    "Checking for active activities...",
-    activities.value.some((activity) => activity.status === "active"),
-  );
-  return activities.value.some((activity) => activity.status === "active");
-});
-
 // Compute progress based on activities with a status of "done"
 const progress = computed(() => {
-  return activities.value
+  return store.activities
     .filter((activity) => activity.status === "done")
     .reduce((total, activity) => total + activity.points, 0);
 });
 
-function handleComplete(elapsedTime, timeDone) {
-  if (selectedActivity.value) {
-    selectedActivity.value.status = "done"; // Set status to "done"
-    selectedActivity.value.duration = elapsedTime; // Update duration with elapsed time
-    selectedActivity.value.timeDone = timeDone; // Assign the finish time
-  }
-}
+// function handleComplete(elapsedTime, timeDone) {
+//   if (selectedActivityId.value) {
+//     store.stopActivity(selectedActivityId.value, elapsedTime);
+//   }
+// }
 
-function handleActiveState(timeActive) {
-  if (selectedActivity.value) {
-    selectedActivity.value.timeActive = timeActive; // Assign the start time
-    selectedActivity.value.status = "active"; // Update the status to active
-  }
-}
+// function handleActiveState(timeActive) {
+//   if (selectedActivityId.value) {
+//     store.startActivity(selectedActivityId.value);
+//   }
+// }
 
 onMounted(() => {
   // Format current date
