@@ -20,9 +20,9 @@
           :key="tab.id"
           @click="navigateToTab(tab.id)"
           class="nav-button"
-          :class="{ 'active-tab': activeTab === tab.id }">
+          :class="{ 'active-tab': isTabActive(tab.id) }">
           <!-- Show text if active, otherwise show icon -->
-          <span v-if="activeTab === tab.id" class="nav-text">{{
+          <span v-if="isTabActive(tab.id)" class="nav-text">{{
             tab.text
           }}</span>
           <span v-else class="material-icons">{{ tab.icon }}</span>
@@ -34,12 +34,13 @@
 
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
+const route = useRoute();
 
 // State to track the active tab and active goal
-const activeTab = ref("home"); // Default to "home"
+const activeTab = ref(""); // Default to no active tab
 const activeGoal = ref(""); // Default to no active goal
 const isGoalsMenuOpen = ref(false);
 
@@ -57,15 +58,26 @@ const goalItems = ref([
   { id: "monthly", icon: "emoji_events", text: "Monthly Progress" },
 ]);
 
+// Function to determine if a tab is active
+function isTabActive(tabId) {
+  if (tabId === "calendar") {
+    // The "Goals" tab is active if the submenu is open or a goal view is displayed
+    return isGoalsMenuOpen.value || route.path.includes("progress");
+  }
+  return activeTab.value === tabId && !isGoalsMenuOpen.value;
+}
+
 // Function to handle navigation for main tabs
 function navigateToTab(tabId) {
   if (tabId === "calendar") {
     // Toggle the Goals submenu
     isGoalsMenuOpen.value = !isGoalsMenuOpen.value;
     activeGoal.value = ""; // Reset active goal when toggling
+    activeTab.value = "calendar"; // Set "Goals" as the active tab
   } else {
     // Close the Goals submenu and navigate to the selected tab
     isGoalsMenuOpen.value = false;
+    activeGoal.value = ""; // Reset active goal
     activeTab.value = tabId;
     router.push(`/${tabId === "home" ? "" : tabId}`);
   }
@@ -160,6 +172,7 @@ function navigateToGoal(goalId) {
   cursor: pointer;
   color: white;
   padding: 0 1.5rem;
+  background: transparent;
 }
 
 .nav-text {
