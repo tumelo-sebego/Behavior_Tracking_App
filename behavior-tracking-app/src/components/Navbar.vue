@@ -6,11 +6,9 @@
         <button
           v-for="item in goalItems"
           :key="item.id"
-          @click="handleGoalSelect(item.id)"
+          @click="navigateToGoal(item.id)"
           class="nav-button"
-          :class="{
-            'active-tab': props.activeGoal === item.id && !justOpened,
-          }">
+          :class="{ 'active-tab': activeGoal === item.id }">
           <span class="material-icons icon-spacing">{{ item.icon }}</span>
           <span class="nav-text">{{ item.text }}</span>
         </button>
@@ -20,27 +18,13 @@
         <button
           v-for="tab in tabs"
           :key="tab.id"
-          @click="handleTabClick(tab.id)"
+          @click="navigateToTab(tab.id)"
           class="nav-button"
-          :class="{
-            'active-tab':
-              tab.id === 'calendar'
-                ? isGoalsMenuOpen
-                : props.active === tab.id && !isGoalsMenuOpen,
-            'inactive-tab':
-              tab.id === 'calendar'
-                ? !isGoalsMenuOpen
-                : props.active !== tab.id || isGoalsMenuOpen,
-          }">
-          <span
-            v-if="
-              tab.id === 'calendar'
-                ? isGoalsMenuOpen
-                : props.active === tab.id && !isGoalsMenuOpen
-            "
-            class="nav-text"
-            >{{ tab.text }}</span
-          >
+          :class="{ 'active-tab': activeTab === tab.id }">
+          <!-- Show text if active, otherwise show icon -->
+          <span v-if="activeTab === tab.id" class="nav-text">{{
+            tab.text
+          }}</span>
           <span v-else class="material-icons">{{ tab.icon }}</span>
         </button>
       </div>
@@ -49,52 +33,52 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from "vue";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
-const props = defineProps({
-  active: {
-    type: String,
-    required: true,
-  },
-  activeGoal: {
-    type: String,
-    default: "",
-  },
-});
+const router = useRouter();
 
-const emit = defineEmits(["navigate", "goalSelect"]);
-
+// State to track the active tab and active goal
+const activeTab = ref("home"); // Default to "home"
+const activeGoal = ref(""); // Default to no active goal
 const isGoalsMenuOpen = ref(false);
-const justOpened = ref(true);
 
-function handleTabClick(tabId) {
-  if (tabId === "calendar") {
-    isGoalsMenuOpen.value = !isGoalsMenuOpen.value;
-    if (isGoalsMenuOpen.value) {
-      justOpened.value = true;
-    }
-  } else {
-    isGoalsMenuOpen.value = false;
-    emit("navigate", tabId);
-  }
-}
-
-function handleGoalSelect(goalId) {
-  justOpened.value = false;
-  emit("goalSelect", goalId);
-}
-
+// Tabs for the main navigation
 const tabs = ref([
   { id: "home", icon: "home", text: "Home" },
   { id: "calendar", icon: "calendar_today", text: "Goals" },
   { id: "profile", icon: "person", text: "Profile" },
 ]);
 
+// Submenu items for the "Goals" tab
 const goalItems = ref([
   { id: "daily", icon: "bolt", text: "Daily Progress" },
   { id: "weekly", icon: "star", text: "Weekly Progress" },
   { id: "monthly", icon: "emoji_events", text: "Monthly Progress" },
 ]);
+
+// Function to handle navigation for main tabs
+function navigateToTab(tabId) {
+  if (tabId === "calendar") {
+    // Toggle the Goals submenu
+    isGoalsMenuOpen.value = !isGoalsMenuOpen.value;
+    activeGoal.value = ""; // Reset active goal when toggling
+  } else {
+    // Close the Goals submenu and navigate to the selected tab
+    isGoalsMenuOpen.value = false;
+    activeTab.value = tabId;
+    router.push(`/${tabId === "home" ? "" : tabId}`);
+  }
+}
+
+// Function to handle navigation for goal submenu items
+function navigateToGoal(goalId) {
+  // Set the active goal and navigate to the corresponding view
+  activeGoal.value = goalId;
+  isGoalsMenuOpen.value = false;
+  activeTab.value = "calendar"; // Keep "Goals" tab active
+  router.push(`/${goalId}progress`);
+}
 </script>
 
 <style scoped>

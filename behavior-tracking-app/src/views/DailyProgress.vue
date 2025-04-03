@@ -1,16 +1,51 @@
 <template>
-  <div>
+  <div class="page-container">
     <Header />
-    <h1>Daily Progress</h1>
-    <p>This view will display the daily progress tracking information.</p>
-    <!-- Additional content related to daily progress can be added here -->
+    <div class="content-container">
+      <h1 class="page-title">Daily Progress</h1>
+      <p class="page-description">
+        This view will display the daily progress tracking information.
+      </p>
+      <!-- Additional content related to daily progress can be added here -->
+    </div>
+    <Navbar :active="'calendar'" :activeGoal="'daily'" />
   </div>
 </template>
 
 <script setup>
 import Header from "../components/Header.vue";
+import Navbar from "../components/Navbar.vue";
 </script>
 
 <style scoped>
-/* Add any specific styles for the DailyProgress view here */
+/* Mimic the layout of the home page */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.content-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.page-description {
+  font-size: 1rem;
+  color: #555;
+}
 </style>

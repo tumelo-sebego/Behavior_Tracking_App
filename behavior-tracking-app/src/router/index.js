@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
+import DailyProgress from "../views/DailyProgress.vue";
 import AddTask from "@/views/Add-Task.vue";
 
 const routes = [
@@ -9,6 +10,10 @@ const routes = [
   { path: "/login", component: Login },
   { path: "/register", component: Register },
   { path: "/add-task", component: AddTask },
+  {
+    path: "/dailyprogress",
+    component: DailyProgress,
+  },
 ];
 
 const router = createRouter({

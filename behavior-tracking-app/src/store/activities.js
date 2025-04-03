@@ -60,7 +60,6 @@ export const useActivitiesStore = defineStore("activities", {
 
   actions: {
     startActivity(id) {
-      console.log("Starting activity with ID:", id);
       const activity = this.getActivityById(id);
       if (activity) {
         activity.status = "active";
