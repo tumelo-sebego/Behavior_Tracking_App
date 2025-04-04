@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 export const useActivitiesStore = defineStore("activities", {
   state: () => ({
     activities: [
+      // Day 1 - March 30, 2025
       {
         id: 1,
         title: "Doing Yoga",
@@ -43,6 +44,258 @@ export const useActivitiesStore = defineStore("activities", {
         dateCreated: "2025-03-31T06:00:00Z",
         points: 40,
       },
+
+      // Day 2 - March 31, 2025
+      {
+        id: 5,
+        title: "Doing Yoga",
+        duration: 30,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-03-31T07:00:00Z",
+        points: 20,
+      },
+      {
+        id: 6,
+        title: "Evening Running",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-03-31T16:00:00Z",
+        points: 20,
+      },
+      {
+        id: 7,
+        title: "Reading A Book",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-03-31T06:00:00Z",
+        points: 20,
+      },
+      {
+        id: 8,
+        title: "Morning Meditation",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-03-31T06:00:00Z",
+        points: 40,
+      },
+
+      // Day 3 - April 1, 2025
+      {
+        id: 9,
+        title: "Doing Yoga",
+        duration: 30,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-01T07:00:00Z",
+        points: 20,
+      },
+      {
+        id: 10,
+        title: "Evening Running",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-01T16:00:00Z",
+        points: 20,
+      },
+      {
+        id: 11,
+        title: "Reading A Book",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-01T06:00:00Z",
+        points: 20,
+      },
+      {
+        id: 12,
+        title: "Morning Meditation",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-01T06:00:00Z",
+        points: 40,
+      },
+
+      // Day 4 - April 2, 2025
+      {
+        id: 13,
+        title: "Doing Yoga",
+        duration: 30,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-02T07:00:00Z",
+        points: 20,
+      },
+      {
+        id: 14,
+        title: "Evening Running",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-02T16:00:00Z",
+        points: 20,
+      },
+      {
+        id: 15,
+        title: "Reading A Book",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-02T06:00:00Z",
+        points: 20,
+      },
+      {
+        id: 16,
+        title: "Morning Meditation",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-02T06:00:00Z",
+        points: 40,
+      },
+
+      // Day 5 - April 3, 2025
+      {
+        id: 17,
+        title: "Doing Yoga",
+        duration: 30,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-03T07:00:00Z",
+        points: 20,
+      },
+      {
+        id: 18,
+        title: "Evening Running",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-03T16:00:00Z",
+        points: 20,
+      },
+      {
+        id: 19,
+        title: "Reading A Book",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-03T06:00:00Z",
+        points: 20,
+      },
+      {
+        id: 20,
+        title: "Morning Meditation",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-03T06:00:00Z",
+        points: 40,
+      },
+
+      // Day 6 - April 4, 2025
+      {
+        id: 21,
+        title: "Doing Yoga",
+        duration: 30,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-04T07:00:00Z",
+        points: 20,
+      },
+      {
+        id: 22,
+        title: "Evening Running",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-04T16:00:00Z",
+        points: 20,
+      },
+      {
+        id: 23,
+        title: "Reading A Book",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-04T06:00:00Z",
+        points: 20,
+      },
+      {
+        id: 24,
+        title: "Morning Meditation",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-04T06:00:00Z",
+        points: 40,
+      },
+
+      // Day 7 - April 5, 2025
+      {
+        id: 25,
+        title: "Doing Yoga",
+        duration: 30,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-05T07:00:00Z",
+        points: 20,
+      },
+      {
+        id: 26,
+        title: "Evening Running",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-05T16:00:00Z",
+        points: 20,
+      },
+      {
+        id: 27,
+        title: "Reading A Book",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-05T06:00:00Z",
+        points: 20,
+      },
+      {
+        id: 28,
+        title: "Morning Meditation",
+        duration: 0,
+        status: "pending",
+        timeActive: null,
+        timeDone: null,
+        dateCreated: "2025-04-05T06:00:00Z",
+        points: 40,
+      },
     ],
     activeActivityId: null, // Track the currently active activity
     activeElapsedTime: 0, // Counter for the currently active activity
@@ -53,8 +306,37 @@ export const useActivitiesStore = defineStore("activities", {
     getActivityById: (state) => (id) => {
       return state.activities.find((activity) => activity.id === id);
     },
+
     hasActiveActivity: (state) => {
       return state.activities.some((activity) => activity.status === "active");
+    },
+
+    getLatestActivities: (state) => {
+      // Get today's date at midnight UTC
+      const today = new Date();
+      today.setUTCHours(0, 0, 0, 0);
+
+      // Find the most recent date in activities
+      const latestDate = state.activities.reduce((latest, activity) => {
+        const activityDate = new Date(activity.dateCreated);
+        return activityDate > latest ? activityDate : latest;
+      }, new Date(0));
+
+      // If we have activities for today, return those
+      if (latestDate >= today) {
+        return state.activities.filter((activity) => {
+          const activityDate = new Date(activity.dateCreated);
+          activityDate.setUTCHours(0, 0, 0, 0);
+          return activityDate.getTime() === today.getTime();
+        });
+      }
+
+      // Otherwise, return activities from the latest date
+      return state.activities.filter((activity) => {
+        const activityDate = new Date(activity.dateCreated);
+        activityDate.setUTCHours(0, 0, 0, 0);
+        return activityDate.getTime() === latestDate.setUTCHours(0, 0, 0, 0);
+      });
     },
   },
 

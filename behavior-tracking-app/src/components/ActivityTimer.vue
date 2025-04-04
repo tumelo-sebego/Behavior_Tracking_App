@@ -55,7 +55,6 @@ function initializeElapsedTime() {
 
 // Start and stop the timer
 function startTimer() {
-  console.log("Starting timer...");
   store.startActivity(activity.value.id);
 }
 
@@ -93,18 +92,10 @@ function getOrdinalSuffix(day) {
   }
 }
 
-// Computed property to format the timeActive (start date)
-const formattedStartDate = computed(() => {
-  if (!props.timeActive) return "N/A"; // Handle cases where timeActive is not provided
-  const date = new Date(props.timeActive);
-  const day = date.getDate();
-  const month = date.toLocaleString("en-US", { month: "long" });
-  return `${day}${getOrdinalSuffix(day)} ${month}`;
-});
 // Computed property to format timeActive
 const formattedTimeActive = computed(() => {
-  if (!props.timeActive) return "N/A";
-  const date = new Date(props.timeActive);
+  if (!activity.value.timeActive) return "N/A";
+  const date = new Date(activity.value.timeActive);
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
   return `${hours}:${minutes}`;
@@ -112,8 +103,8 @@ const formattedTimeActive = computed(() => {
 
 // Computed property to format timeDone
 const formattedTimeDone = computed(() => {
-  if (!props.timeDone) return "N/A";
-  const date = new Date(props.timeDone);
+  if (!activity.value.timeDone) return "N/A";
+  const date = new Date(activity.value.timeDone);
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
   return `${hours}:${minutes}`;
@@ -121,7 +112,7 @@ const formattedTimeDone = computed(() => {
 
 // Computed property to format the created date
 const formattedCreatedDate = computed(() => {
-  const date = new Date(props.dateCreated);
+  const date = new Date(activity.value.dateCreated);
   const day = date.getDate();
   const month = date.toLocaleString("en-US", { month: "long" });
   return `${day}${getOrdinalSuffix(day)} ${month}`;
@@ -180,17 +171,13 @@ watch(
 
       <!-- Activity Details Pill -->
       <div
-        v-if="activity.status == 'expired' && activity.status == 'done'"
+        v-if="activity.status === 'expired' || activity.status === 'done'"
         class="activity-details-pill">
         <div class="details-group">
           <i class="pi pi-calendar calendar-icon"></i>
           <span class="details-date">
-            {{
-              activity.status === "expired"
-                ? formattedCreatedDate
-                : formattedStartDate
-            }}</span
-          >
+            {{ formattedCreatedDate }}
+          </span>
         </div>
         <div v-if="activity.status !== 'expired'" class="details-group">
           <span class="vertical-line"></span>
