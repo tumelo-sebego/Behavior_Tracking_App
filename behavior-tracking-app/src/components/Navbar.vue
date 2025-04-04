@@ -2,7 +2,10 @@
   <div class="nav-wrapper">
     <div class="bottom-nav">
       <!-- Goals Submenu -->
-      <div v-if="isGoalsMenuOpen" class="goals-submenu">
+      <div
+        v-if="isGoalsMenuVisible"
+        :class="['goals-submenu', { 'slide-down': isClosingSubmenu }]"
+        @animationend="handleAnimationEnd">
         <button
           v-for="item in goalItems"
           :key="item.id"
@@ -33,7 +36,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
@@ -42,7 +45,9 @@ const route = useRoute();
 // State to track the active tab and active goal
 const activeTab = ref(""); // Default to no active tab
 const activeGoal = ref(""); // Default to no active goal
-const isGoalsMenuOpen = ref(false);
+const isGoalsMenuOpen = ref(false); // Tracks if the submenu is logically open
+const isGoalsMenuVisible = ref(false); // Tracks if the submenu is visible (for animation)
+const isClosingSubmenu = ref(false); // Tracks if the submenu is animating down
 
 // Tabs for the main navigation
 const tabs = ref([
@@ -70,14 +75,22 @@ function isTabActive(tabId) {
 // Function to handle navigation for main tabs
 function navigateToTab(tabId) {
   if (tabId === "calendar") {
-    // Toggle the Goals submenu
-    isGoalsMenuOpen.value = !isGoalsMenuOpen.value;
-    activeGoal.value = ""; // Reset active goal when toggling
+    if (isClosingSubmenu.value) {
+      // Prevent toggling while the submenu is animating
+      return;
+    }
+
+    if (isGoalsMenuOpen.value) {
+      // If the submenu is already open, start the closing animation
+      closeGoalsMenu();
+    } else {
+      // Open the submenu
+      openGoalsMenu();
+    }
     activeTab.value = "calendar"; // Set "Goals" as the active tab
   } else {
     // Close the Goals submenu and navigate to the selected tab
-    isGoalsMenuOpen.value = false;
-    activeGoal.value = ""; // Reset active goal
+    closeGoalsMenu();
     activeTab.value = tabId;
     router.push(`/${tabId === "home" ? "" : tabId}`);
   }
@@ -87,10 +100,75 @@ function navigateToTab(tabId) {
 function navigateToGoal(goalId) {
   // Set the active goal and navigate to the corresponding view
   activeGoal.value = goalId;
-  isGoalsMenuOpen.value = false;
+  closeGoalsMenu();
   activeTab.value = "calendar"; // Keep "Goals" tab active
   router.push(`/${goalId}progress`);
 }
+
+// Function to open the Goals submenu
+function openGoalsMenu() {
+  if (isClosingSubmenu.value) {
+    // Prevent opening while the submenu is animating
+    return;
+  }
+  isGoalsMenuOpen.value = true;
+  isGoalsMenuVisible.value = true;
+  isClosingSubmenu.value = false;
+}
+
+// Function to close the Goals submenu
+function closeGoalsMenu() {
+  if (!isGoalsMenuOpen.value) {
+    // Prevent closing if the submenu is already closed
+    return;
+  }
+  isGoalsMenuOpen.value = false;
+  isClosingSubmenu.value = true; // Start the closing animation
+}
+
+// Handle the end of the animation
+function handleAnimationEnd() {
+  if (isClosingSubmenu.value) {
+    isGoalsMenuVisible.value = false; // Hide the submenu after the animation
+    isClosingSubmenu.value = false;
+
+    if (!route.path.includes("progress")) {
+      if (route.path === "/") {
+        activeTab.value = "home"; // Default to "Home" tab
+      } else {
+        activeTab.value = route.path.replace("/", ""); // Set the active tab based on the route
+      }
+    }
+  }
+}
+
+// Initialize the active tab based on the current route
+onMounted(() => {
+  if (route.path === "/") {
+    activeTab.value = "home"; // Default to "Home" tab
+  } else if (route.path.includes("progress")) {
+    activeTab.value = "calendar"; // Default to "Goals" tab if a submenu view is active
+  } else {
+    activeTab.value = route.path.replace("/", ""); // Set the active tab based on the route
+  }
+});
+
+// Close the submenu when clicking outside
+function handleClickOutside(event) {
+  const navWrapper = document.querySelector(".nav-wrapper");
+  if (navWrapper && !navWrapper.contains(event.target)) {
+    closeGoalsMenu();
+  }
+}
+
+// Add and remove event listeners for clicks outside the menu
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
 </script>
 
 <style scoped>
@@ -129,36 +207,22 @@ function navigateToGoal(goalId) {
   flex-direction: column;
   gap: 0.5rem;
   width: 100%;
+  animation: slideUpItem 0.3s ease-out forwards;
+}
+
+.goals-submenu.slide-down {
+  animation: slideDownItem 0.3s ease-out forwards;
 }
 
 .goals-submenu .nav-button {
   background-color: #e2e8f0;
   border-radius: 9999px;
   padding: 0.25rem;
-  animation: slideUpItem 0.3s ease-out forwards;
-  opacity: 0;
-  transform-origin: bottom;
   color: #232323;
 }
 
 .goals-submenu .nav-button.active-tab {
   background-color: #81c784;
-}
-
-.goals-submenu .nav-button:nth-child(3) {
-  animation-delay: 0s;
-}
-
-.goals-submenu .nav-button:nth-child(2) {
-  animation-delay: 0.1s;
-}
-
-.goals-submenu .nav-button:nth-child(1) {
-  animation-delay: 0.2s;
-}
-
-.goals-submenu .nav-button .material-icons {
-  color: #232323;
 }
 
 .nav-button {
@@ -181,12 +245,8 @@ function navigateToGoal(goalId) {
 }
 
 .active-tab {
-  background-color: #81c784;
+  background-color: #50a65d;
   color: #232323;
-}
-
-.inactive-tab {
-  background-color: transparent;
 }
 
 .material-icons {
@@ -210,6 +270,17 @@ function navigateToGoal(goalId) {
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@keyframes slideDownItem {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
   }
 }
 </style>
