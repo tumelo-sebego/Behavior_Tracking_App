@@ -56,7 +56,7 @@
 
             <div class="activities-container">
               <ActivityItem
-                v-for="activity in store.activities"
+                v-for="activity in latestActivities"
                 :key="activity.id"
                 :id="activity.id"
                 @open-dialog="showDialog" />
@@ -132,7 +132,6 @@
           </template>
         </div>
 
-        <!-- Replace BottomNavigation with Navbar -->
         <Navbar
           :active="activeTab"
           :active-goal="activeProgressType"
@@ -166,6 +165,7 @@ const activeTab = ref("home");
 const date = ref("");
 const activeProgressType = ref("daily");
 const store = useActivitiesStore();
+const latestActivities = computed(() => store.getLatestActivities);
 
 const dialogVisible = ref(false);
 const selectedActivityId = ref(null);
@@ -243,7 +243,7 @@ const handleProgressTypeChange = (type) => {
 
 // Compute progress based on activities with a status of "done"
 const progress = computed(() => {
-  return store.activities
+  return latestActivities.value
     .filter((activity) => activity.status === "done")
     .reduce((total, activity) => total + activity.points, 0);
 });
