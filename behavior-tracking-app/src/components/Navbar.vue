@@ -28,7 +28,12 @@
           <span v-if="isTabActive(tab.id)" class="nav-text">{{
             tab.text
           }}</span>
-          <span v-else class="material-icons">{{ tab.icon }}</span>
+          <span
+            v-else
+            class="material-icons"
+            @click.stop="navigateToTab(tab.id)"
+            >{{ tab.icon }}</span
+          >
         </button>
       </div>
     </div>
@@ -81,13 +86,14 @@ function navigateToTab(tabId) {
     }
 
     if (isGoalsMenuOpen.value) {
-      // If the submenu is already open, start the closing animation
+      // If the submenu is already open, close it and revert to current view's tab
       closeGoalsMenu();
+      // Don't set activeTab here, let handleAnimationEnd handle it
     } else {
       // Open the submenu
       openGoalsMenu();
+      activeTab.value = "calendar"; // Set "Goals" as the active tab only when opening
     }
-    activeTab.value = "calendar"; // Set "Goals" as the active tab
   } else {
     // Close the Goals submenu and navigate to the selected tab
     closeGoalsMenu();
@@ -108,7 +114,6 @@ function navigateToGoal(goalId) {
 // Function to open the Goals submenu
 function openGoalsMenu() {
   if (isClosingSubmenu.value) {
-    // Prevent opening while the submenu is animating
     return;
   }
   isGoalsMenuOpen.value = true;
@@ -118,25 +123,25 @@ function openGoalsMenu() {
 
 // Function to close the Goals submenu
 function closeGoalsMenu() {
-  if (!isGoalsMenuOpen.value) {
-    // Prevent closing if the submenu is already closed
+  if (!isGoalsMenuOpen.value || isClosingSubmenu.value) {
     return;
   }
   isGoalsMenuOpen.value = false;
-  isClosingSubmenu.value = true; // Start the closing animation
+  isClosingSubmenu.value = true;
 }
 
 // Handle the end of the animation
 function handleAnimationEnd() {
   if (isClosingSubmenu.value) {
-    isGoalsMenuVisible.value = false; // Hide the submenu after the animation
+    isGoalsMenuVisible.value = false;
     isClosingSubmenu.value = false;
 
+    // Only update the active tab if we're not on a progress view
     if (!route.path.includes("progress")) {
       if (route.path === "/") {
-        activeTab.value = "home"; // Default to "Home" tab
+        activeTab.value = "home";
       } else {
-        activeTab.value = route.path.replace("/", ""); // Set the active tab based on the route
+        activeTab.value = route.path.replace("/", "");
       }
     }
   }
