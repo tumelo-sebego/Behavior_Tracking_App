@@ -9,33 +9,10 @@
 
       <div class="content-container">
         <div class="days-container">
-          <div
+          <DayItem
             v-for="day in groupedActivities"
             :key="day.date"
-            class="day-item">
-            <!-- Day Header -->
-            <div class="day-header">
-              <span class="day-date">{{ formatDate(day.date) }}</span>
-              <div class="day-stats">
-                <span class="duration-group">
-                  <i class="pi pi-clock"></i>
-                  <span>{{ formatTotalDuration(day.activities) }}</span>
-                </span>
-                <span class="progress-value"
-                  >{{ calculateDayProgress(day.activities) }} pts</span
-                >
-              </div>
-            </div>
-
-            <!-- Activities List -->
-            <div class="activities-list">
-              <ActivityItem
-                v-for="activity in day.activities"
-                :key="activity.id"
-                :id="activity.id"
-                @open-dialog="showDialog" />
-            </div>
-          </div>
+            :activity-date="day.date.toISOString()" />
         </div>
 
         <!-- ActivityTimer dialog -->
