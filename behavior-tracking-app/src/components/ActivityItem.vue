@@ -159,7 +159,7 @@ onUnmounted(() => {
 
 <style scoped>
 .activity-item {
-  background-color: #f1f3e6;
+  background-color: #eaeed3;
   border-radius: 1rem;
   padding: 0.75rem;
   margin-bottom: 0.75rem;

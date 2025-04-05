@@ -259,7 +259,7 @@ export const useActivitiesStore = defineStore("activities", {
       {
         id: 25,
         title: "Doing Yoga",
-        duration: 30,
+        duration: 0,
         status: "pending",
         timeActive: null,
         timeDone: null,
