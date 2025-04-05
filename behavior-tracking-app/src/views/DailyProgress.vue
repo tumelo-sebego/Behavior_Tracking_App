@@ -1,7 +1,11 @@
 <template>
   <div class="phone-frame">
     <div class="h-full flex-col-container">
-      <Header :name="username" :date="date" />
+      <!-- Custom Header -->
+      <div class="page-header">
+        <span class="material-icons">bolt</span>
+        <span class="header-text">Daily Progress</span>
+      </div>
 
       <div class="content-container">
         <div class="days-container">
@@ -49,14 +53,11 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useActivitiesStore } from "@/store/activities";
-import Header from "@/components/Header.vue";
 import ActivityItem from "@/components/ActivityItem.vue";
 import Navbar from "@/components/Navbar.vue";
 import ActivityTimer from "@/components/ActivityTimer.vue";
 
 const store = useActivitiesStore();
-const username = ref("Tumelo");
-const date = ref(formatCurrentDate());
 const dialogVisible = ref(false);
 const selectedActivityId = ref(null);
 
@@ -86,13 +87,13 @@ function formatDate(date) {
   return `${weekday}. ${day}${suffix} ${month}`;
 }
 
-function formatCurrentDate() {
-  const today = new Date();
-  const day = today.getDate();
-  const weekday = today.toLocaleDateString("en-US", { weekday: "long" });
-  const month = today.toLocaleDateString("en-US", { month: "long" });
-  return `${weekday}, ${month} ${day}${getOrdinalSuffix(day)}`;
-}
+// function formatCurrentDate() {
+//   const today = new Date();
+//   const day = today.getDate();
+//   const weekday = today.toLocaleDateString("en-US", { weekday: "long" });
+//   const month = today.toLocaleDateString("en-US", { month: "long" });
+//   return `${weekday}, ${month} ${day}${getOrdinalSuffix(day)}`;
+// }
 
 function getOrdinalSuffix(day) {
   if (day >= 11 && day <= 13) return "th";
@@ -138,7 +139,7 @@ function showDialog(activityId) {
   max-width: 440px;
   margin: 0 auto;
   min-height: 100vh;
-  background-color: #1a1a1a;
+  background-color: rgb(250 251 231);
   color: #f1f3e6;
 }
 
@@ -164,9 +165,7 @@ function showDialog(activityId) {
 }
 
 .day-item {
-  background: #232323;
   border-radius: 1rem;
-  padding: 1rem;
 }
 
 .day-header {
@@ -207,5 +206,28 @@ function showDialog(activityId) {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+/* Add these new styles */
+.page-header {
+  background-color: #50a65d;
+  color: #232323;
+  padding: 0.25rem;
+  border-radius: 9999px;
+  width: 20rem;
+  margin: 1rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.material-icons {
+  font-size: 1.5rem;
+}
+
+.header-text {
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 </style>
