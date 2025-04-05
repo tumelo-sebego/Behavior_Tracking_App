@@ -1,5 +1,5 @@
 <template>
-  <div class="day-item">
+  <div class="day-item" @click="$emit('show-details')">
     <div class="day-content">
       <div class="day-info">
         <div class="title">{{ formattedDate }}</div>
@@ -27,6 +27,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+defineEmits(["show-details"]);
 
 const store = useActivitiesStore();
 

@@ -12,8 +12,13 @@
           <DayItem
             v-for="day in groupedActivities"
             :key="day.date"
-            :activity-date="day.date.toISOString()" />
+            :activity-date="day.date.toISOString()"
+            @show-details="showDayDetails(day.date)" />
         </div>
+
+        <DayDetailsDialog
+          v-model:visible="dayDetailsVisible"
+          :activity-date="selectedDate" />
 
         <!-- ActivityTimer dialog -->
         <ActivityTimer
@@ -30,13 +35,16 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useActivitiesStore } from "@/store/activities";
-import ActivityItem from "@/components/ActivityItem.vue";
+import DayItem from "@/components/DayItem.vue";
 import Navbar from "@/components/Navbar.vue";
 import ActivityTimer from "@/components/ActivityTimer.vue";
+import DayDetailsDialog from "@/components/DayDetailsDialog.vue";
 
 const store = useActivitiesStore();
 const dialogVisible = ref(false);
 const selectedActivityId = ref(null);
+const dayDetailsVisible = ref(false);
+const selectedDate = ref("");
 
 // Group activities by date
 const groupedActivities = computed(() => {
@@ -56,58 +64,9 @@ const groupedActivities = computed(() => {
   return Object.values(groups).sort((a, b) => b.date - a.date);
 });
 
-function formatDate(date) {
-  const day = date.getDate();
-  const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
-  const month = date.toLocaleDateString("en-US", { month: "long" });
-  const suffix = getOrdinalSuffix(day);
-  return `${weekday}. ${day}${suffix} ${month}`;
-}
-
-// function formatCurrentDate() {
-//   const today = new Date();
-//   const day = today.getDate();
-//   const weekday = today.toLocaleDateString("en-US", { weekday: "long" });
-//   const month = today.toLocaleDateString("en-US", { month: "long" });
-//   return `${weekday}, ${month} ${day}${getOrdinalSuffix(day)}`;
-// }
-
-function getOrdinalSuffix(day) {
-  if (day >= 11 && day <= 13) return "th";
-  switch (day % 10) {
-    case 1:
-      return "st";
-    case 2:
-      return "nd";
-    case 3:
-      return "rd";
-    default:
-      return "th";
-  }
-}
-
-function formatTotalDuration(activities) {
-  const totalMinutes = activities.reduce((total, activity) => {
-    return total + (activity.duration || 0);
-  }, 0);
-
-  if (totalMinutes === 0) return "0 min";
-  if (totalMinutes < 60) return `${totalMinutes} min`;
-
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
-}
-
-function calculateDayProgress(activities) {
-  return activities
-    .filter((activity) => activity.status === "done")
-    .reduce((total, activity) => total + activity.points, 0);
-}
-
-function showDialog(activityId) {
-  selectedActivityId.value = activityId;
-  dialogVisible.value = true;
+function showDayDetails(date) {
+  selectedDate.value = date.toISOString();
+  dayDetailsVisible.value = true;
 }
 </script>
 
