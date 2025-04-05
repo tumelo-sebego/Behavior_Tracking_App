@@ -22,7 +22,7 @@ import { computed } from "vue";
 import { useActivitiesStore } from "@/store/activities";
 
 const props = defineProps({
-  id: {
+  activityDate: {
     type: String, // Date string as ID
     required: true,
   },
@@ -30,29 +30,29 @@ const props = defineProps({
 
 const store = useActivitiesStore();
 
-// Get activities for this day
+// Get activities for this day using getActivitiesByDate
 const dayActivities = computed(() => {
-  const activities = store.getLatestActivities;
-  return activities.filter(activity => {
-    const activityDate = new Date(activity.dateCreated);
-    return activityDate.toDateString() === new Date(props.id).toDateString();
-  });
+  return store.getActivitiesByDate(props.activityDate);
 });
 
 // Format the date (e.g., "Mon, March 24th")
 const formattedDate = computed(() => {
-  const date = new Date(props.id);
+  const date = new Date(props.activityDate);
   const day = date.getDate();
   const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
   const month = date.toLocaleDateString("en-US", { month: "long" });
-  
+
   function getOrdinalSuffix(d) {
     if (d >= 11 && d <= 13) return "th";
     switch (d % 10) {
-      case 1: return "st";
-      case 2: return "nd";
-      case 3: return "rd";
-      default: return "th";
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
     }
   }
 
@@ -63,9 +63,10 @@ const formattedDate = computed(() => {
 const dayTimeRange = computed(() => {
   if (!dayActivities.value.length) return "No activities";
 
-  const times = dayActivities.value.map(activity => 
-    new Date(activity.dateCreated).getHours());
-  
+  const times = dayActivities.value.map((activity) =>
+    new Date(activity.dateCreated).getHours(),
+  );
+
   const firstTime = Math.min(...times);
   const lastTime = Math.max(...times);
 
@@ -75,7 +76,7 @@ const dayTimeRange = computed(() => {
 // Calculate total points from completed activities
 const totalPoints = computed(() => {
   return dayActivities.value
-    .filter(activity => activity.status === "done")
+    .filter((activity) => activity.status === "done")
     .reduce((total, activity) => total + activity.points, 0);
 });
 </script>
