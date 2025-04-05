@@ -48,9 +48,13 @@ const selectedDate = ref("");
 
 // Group activities by date
 const groupedActivities = computed(() => {
-  const activities = store.getLatestActivities;
+  // Get all activities from the store
+  const activities = store.activities;
+
   const groups = activities.reduce((acc, activity) => {
-    const date = new Date(activity.dateCreated).toDateString();
+    // Create a date string for grouping (YYYY-MM-DD)
+    const date = new Date(activity.dateCreated).toISOString().split("T")[0];
+
     if (!acc[date]) {
       acc[date] = {
         date: new Date(activity.dateCreated),
@@ -61,12 +65,14 @@ const groupedActivities = computed(() => {
     return acc;
   }, {});
 
+  // Sort groups by date in descending order (newest first)
   return Object.values(groups).sort((a, b) => b.date - a.date);
 });
 
 function showDayDetails(date) {
   selectedDate.value = date.toISOString();
   dayDetailsVisible.value = true;
+  console.log(groupedActivities.value);
 }
 </script>
 

@@ -10,8 +10,7 @@
       </div>
       <div class="separator"></div>
       <div class="points-container">
-        <span class="points-value">{{ totalPoints }}</span>
-        <span class="points-unit">pts</span>
+        <span class="points-value">{{ totalPoints }}%</span>
       </div>
     </div>
   </div>
