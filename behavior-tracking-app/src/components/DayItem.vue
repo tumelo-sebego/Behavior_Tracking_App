@@ -59,18 +59,28 @@ const formattedDate = computed(() => {
   return `${weekday}, ${month} ${day}${getOrdinalSuffix(day)}`;
 });
 
-// Calculate time range from first to last activity
+// Calculate time range from first to last completed activity
 const dayTimeRange = computed(() => {
-  if (!dayActivities.value.length) return "No activities";
-
-  const times = dayActivities.value.map((activity) =>
-    new Date(activity.dateCreated).getHours(),
+  const completedActivities = dayActivities.value.filter(
+    (activity) => activity.status === "done",
   );
 
-  const firstTime = Math.min(...times);
-  const lastTime = Math.max(...times);
+  if (!completedActivities.length) return "Expired";
 
-  return `${firstTime}:00 - ${lastTime}:00`;
+  const times = completedActivities.map(
+    (activity) => new Date(activity.timeActive),
+  );
+  const firstTime = new Date(Math.min(...times));
+  const lastTime = new Date(Math.max(...times));
+
+  // Format times as HH:mm
+  const formatTime = (date) => {
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
+  return `${formatTime(firstTime)} - ${formatTime(lastTime)}`;
 });
 
 // Calculate total points from completed activities
