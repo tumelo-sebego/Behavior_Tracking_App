@@ -338,6 +338,19 @@ export const useActivitiesStore = defineStore("activities", {
         return activityDate.getTime() === latestDate.setUTCHours(0, 0, 0, 0);
       });
     },
+
+    getActivitiesByDate: (state) => (date) => {
+      // Convert input date to midnight UTC for comparison
+      const targetDate = new Date(date);
+      targetDate.setUTCHours(0, 0, 0, 0);
+
+      // Filter activities that match the target date
+      return state.activities.filter((activity) => {
+        const activityDate = new Date(activity.dateCreated);
+        activityDate.setUTCHours(0, 0, 0, 0);
+        return activityDate.getTime() === targetDate.getTime();
+      });
+    },
   },
 
   actions: {
