@@ -38,6 +38,12 @@
           <ProgressCircle :progress="dayProgress" />
         </div>
 
+        <!-- Duration Summary -->
+        <div class="duration-summary">
+          <i class="pi pi-clock"></i>
+          <span class="duration-text">Duration: {{ totalDuration }}</span>
+        </div>
+
         <!-- Activities List -->
         <div class="activities-container">
           <ActivityItem
@@ -119,6 +125,20 @@ const dayProgress = computed(() => {
     .reduce((total, activity) => total + activity.points, 0);
 });
 
+// Calculate total duration
+const totalDuration = computed(() => {
+  const total = dayActivities.value.reduce((sum, activity) => {
+    return sum + (activity.duration || 0);
+  }, 0);
+
+  if (total === 0) return "0 min";
+  if (total < 60) return `${total} min`;
+
+  const hours = Math.floor(total / 60);
+  const minutes = total % 60;
+  return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+});
+
 // Show ActivityTimer dialog
 function showActivityDialog(activityId) {
   selectedActivityId.value = activityId;
@@ -193,6 +213,27 @@ function onClose() {
   margin: 2rem 0;
   display: flex;
   justify-content: center;
+}
+
+/* Duration summary section */
+.duration-summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+  color: #232323;
+}
+
+.duration-summary i {
+  font-size: 1.25rem;
+  color: #50a65d;
+}
+
+.duration-text {
+  font-size: 1.125rem;
+  font-weight: 500;
 }
 
 .activities-container {

@@ -68,7 +68,7 @@ const tabs = ref([
 const goalItems = ref([
   { id: "daily", icon: "bolt", text: "Daily Progress" },
   { id: "weekly", icon: "star", text: "Weekly Progress" },
-  { id: "monthly", icon: "emoji_events", text: "Monthly Progress" },
+  { id: "goal", icon: "emoji_events", text: "Goal Progress" },
 ]);
 
 // Function to determine if a tab is active
@@ -236,7 +236,7 @@ function isGoalViewActive(goalId) {
 }
 
 .goals-submenu .material-icons {
-  color: 232323;
+  color: #232323;
 }
 .goals-submenu .nav-button.active-tab {
   background-color: #50a65d;
