@@ -11,8 +11,8 @@ export const useGoalSettingsStore = defineStore("goalSettings", {
         totalPoints: 280,
         totalDays: 5,
         daysPerWeek: 5,
-        endDate: "2025-04-30T23:59:59Z",
-        completionRate: 56, // (280 / (5 * 100)) * 100
+        endDate: "2025-03-31T06:00:00Z", // firstActiveDate + totalDays
+        completionRate: 56,
       },
       {
         id: 2,
@@ -22,8 +22,8 @@ export const useGoalSettingsStore = defineStore("goalSettings", {
         totalPoints: 450,
         totalDays: 7,
         daysPerWeek: 7,
-        endDate: "2025-05-15T23:59:59Z",
-        completionRate: 64.29, // (450 / (7 * 100)) * 100
+        endDate: "2025-04-05T17:00:00Z", // firstActiveDate + totalDays
+        completionRate: 64.29,
       },
       {
         id: 3,
@@ -33,8 +33,8 @@ export const useGoalSettingsStore = defineStore("goalSettings", {
         totalPoints: 160,
         totalDays: 4,
         daysPerWeek: 4,
-        endDate: "2025-04-20T23:59:59Z",
-        completionRate: 40, // (160 / (4 * 100)) * 100
+        endDate: "2025-04-04T09:00:00Z", // firstActiveDate + totalDays
+        completionRate: 40,
       },
       {
         id: 4,
@@ -44,8 +44,8 @@ export const useGoalSettingsStore = defineStore("goalSettings", {
         totalPoints: 300,
         totalDays: 3,
         daysPerWeek: 3,
-        endDate: "2025-05-01T23:59:59Z",
-        completionRate: 100, // (300 / (3 * 100)) * 100
+        endDate: "2025-04-04T08:00:00Z", // firstActiveDate + totalDays
+        completionRate: 100,
       },
       {
         id: 5,
@@ -55,8 +55,8 @@ export const useGoalSettingsStore = defineStore("goalSettings", {
         totalPoints: 0,
         totalDays: 6,
         daysPerWeek: 6,
-        endDate: "2025-05-31T23:59:59Z",
-        completionRate: 0, // (0 / (6 * 100)) * 100
+        endDate: null, // firstActiveDate is null
+        completionRate: 0,
       },
     ],
   }),
@@ -90,6 +90,34 @@ export const useGoalSettingsStore = defineStore("goalSettings", {
         const endDate = new Date(goal.endDate);
         return endDate < now;
       });
+    },
+  },
+
+  actions: {
+    updateFirstActiveDate(goalId, activityDate) {
+      const goal = this.goalSettings.find((g) => g.id === goalId);
+      if (!goal || goal.firstActiveDate) return; // Only set if not already set
+
+      // Set first active date
+      goal.firstActiveDate = activityDate;
+
+      // Calculate end date based on first active date
+      const startDate = new Date(activityDate);
+      const endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + goal.totalDays - 1); // -1 because first day counts
+      endDate.setHours(23, 59, 59, 999); // End of the last day
+
+      goal.endDate = endDate.toISOString();
+    },
+
+    createGoal(goalData) {
+      const newGoal = {
+        ...goalData,
+        firstActiveDate: null,
+        endDate: null, // Will be set when first activity starts
+        completionRate: 0,
+      };
+      this.goalSettings.push(newGoal);
     },
   },
 });

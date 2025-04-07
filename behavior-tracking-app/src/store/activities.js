@@ -356,6 +356,16 @@ export const useActivitiesStore = defineStore("activities", {
   actions: {
     startActivity(id) {
       const activity = this.getActivityById(id);
+      const goalStore = useGoalSettingsStore();
+      const activeGoal = goalStore.getActiveGoal;
+
+      if (activeGoal && !activeGoal.firstActiveDate) {
+        goalStore.updateFirstActiveDate(
+          activeGoal.id,
+          new Date().toISOString(),
+        );
+      }
+
       if (activity) {
         activity.status = "active";
         activity.timeActive = new Date().toISOString();
