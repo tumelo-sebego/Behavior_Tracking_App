@@ -125,18 +125,28 @@ const dayProgress = computed(() => {
     .reduce((total, activity) => total + activity.points, 0);
 });
 
-// Calculate total duration
+// Calculate total duration with seconds
 const totalDuration = computed(() => {
-  const total = dayActivities.value.reduce((sum, activity) => {
+  const totalSeconds = dayActivities.value.reduce((sum, activity) => {
     return sum + (activity.duration || 0);
   }, 0);
 
-  if (total === 0) return "0 min";
-  if (total < 60) return `${total} min`;
+  // Convert to hours, minutes, seconds
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
 
-  const hours = Math.floor(total / 60);
-  const minutes = total % 60;
-  return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+  // Format based on duration length
+  if (hours > 0) {
+    // 1h15min
+    return minutes > 0 ? `${hours}h ${minutes}min` : `${hours}h`;
+  } else if (minutes > 0) {
+    // 1min15sec
+    return seconds > 0 ? `${minutes}min ${seconds}sec` : `${minutes}min`;
+  } else {
+    // 17sec
+    return `${seconds}sec`;
+  }
 });
 
 // Show ActivityTimer dialog
@@ -194,7 +204,8 @@ function onClose() {
 }
 
 .dialog-title {
-  margin-top: 2rem;
+  margin-top: 4rem;
+  margin-bottom: 0;
   font-size: 1.5rem;
   font-weight: 500;
   color: #232323;
@@ -210,7 +221,8 @@ function onClose() {
 }
 
 .progress-container {
-  margin: 2rem 0;
+  margin: 1rem 0;
+  margin-top: 0;
   display: flex;
   justify-content: center;
 }
@@ -221,18 +233,17 @@ function onClose() {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  margin-top: -1rem;
+  margin-top: -2rem;
   margin-bottom: 2rem;
   color: #232323;
+  font-size: 1rem;
 }
 
 .duration-summary i {
-  font-size: 1.25rem;
   color: #50a65d;
 }
 
 .duration-text {
-  font-size: 1.125rem;
   font-weight: 500;
 }
 
