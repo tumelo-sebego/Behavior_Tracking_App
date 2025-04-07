@@ -19,26 +19,33 @@
     class="day-details-dialog"
     transition="dialog">
     <div class="dialog-wrapper" :class="{ 'dialog-enter-active': visible }">
-      <!-- Close Button -->
-      <div class="close-button-container">
-        <Button icon="pi pi-times" @click="onClose" text class="close-button" />
+      <!-- Fixed Header Section -->
+      <div class="">
+        <div class="close-button-container">
+          <Button
+            icon="pi pi-times"
+            @click="onClose"
+            text
+            class="close-button" />
+        </div>
       </div>
 
-      <!-- Date Header -->
-      <h2 class="dialog-title">{{ formattedDate }}</h2>
+      <!-- Scrollable Content -->
+      <div class="scrollable-content">
+        <h2 class="dialog-title">{{ formattedDate }}</h2>
+        <!-- Progress Circle -->
+        <div class="progress-container">
+          <ProgressCircle :progress="dayProgress" />
+        </div>
 
-      <!-- Progress Circle -->
-      <div class="progress-container">
-        <ProgressCircle :progress="dayProgress" />
-      </div>
-
-      <!-- Activities List -->
-      <div class="activities-container">
-        <ActivityItem
-          v-for="activity in dayActivities"
-          :key="activity.id"
-          :id="activity.id"
-          @open-dialog="showActivityDialog" />
+        <!-- Activities List -->
+        <div class="activities-container">
+          <ActivityItem
+            v-for="activity in dayActivities"
+            :key="activity.id"
+            :id="activity.id"
+            @open-dialog="showActivityDialog" />
+        </div>
       </div>
 
       <!-- ActivityTimer Dialog -->
@@ -128,7 +135,6 @@ function onClose() {
 .dialog-wrapper {
   display: flex;
   flex-direction: column;
-  padding: 2rem;
   height: 100vh;
   width: 100%;
   background-color: rgb(250 251 231);
@@ -143,11 +149,21 @@ function onClose() {
   opacity: 1;
 }
 
+/* Fixed header section */
+.fixed-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background-color: rgb(250 251 231);
+  padding: 1rem 2rem;
+}
+
 .close-button-container {
   position: absolute;
   top: 1rem;
   left: 1rem;
-  z-index: 10;
 }
 
 .close-button {
@@ -158,11 +174,19 @@ function onClose() {
 }
 
 .dialog-title {
-  margin-top: 3rem;
+  margin-top: 2rem;
   font-size: 1.5rem;
   font-weight: 500;
   color: #232323;
   text-align: center;
+}
+
+/* Scrollable content section */
+.scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 2rem 2rem;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
 .progress-container {
@@ -174,7 +198,7 @@ function onClose() {
 .activities-container {
   display: flex;
   flex-direction: column;
-  margin-top: 2rem;
+  gap: 1rem;
 }
 
 :deep(.p-dialog-mask) {
