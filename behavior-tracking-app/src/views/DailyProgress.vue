@@ -1,13 +1,18 @@
 <template>
   <div class="phone-frame">
     <div class="h-full flex-col-container">
-      <!-- Custom Header -->
-      <div class="page-header">
-        <span class="material-icons">bolt</span>
-        <span class="header-text">Daily Progress</span>
+      <!-- Sticky Header -->
+      <div class="header-container">
+        <div class="page-header" :class="{ 'header-hidden': isHeaderHidden }">
+          <span class="material-icons">bolt</span>
+          <span class="header-text">Daily Progress</span>
+        </div>
       </div>
 
-      <div class="content-container">
+      <div
+        class="content-container"
+        @scroll="handleScroll"
+        ref="contentContainer">
         <div class="days-container">
           <DayItem
             v-for="day in groupedActivities"
@@ -45,6 +50,27 @@ const dialogVisible = ref(false);
 const selectedActivityId = ref(null);
 const dayDetailsVisible = ref(false);
 const selectedDate = ref("");
+const contentContainer = ref(null);
+const isHeaderHidden = ref(false);
+let lastScrollPosition = 0;
+
+function handleScroll(event) {
+  const currentScroll = event.target.scrollTop;
+
+  // Only update if we've scrolled more than 5px to prevent tiny movements
+  if (Math.abs(currentScroll - lastScrollPosition) > 5) {
+    // Scrolling down
+    if (currentScroll > lastScrollPosition && currentScroll > 50) {
+      isHeaderHidden.value = true;
+    }
+    // Scrolling up
+    else if (currentScroll < lastScrollPosition) {
+      isHeaderHidden.value = false;
+    }
+
+    lastScrollPosition = currentScroll;
+  }
+}
 
 // Group activities by date
 const groupedActivities = computed(() => {
@@ -94,9 +120,39 @@ function showDayDetails(date) {
   min-height: 100vh;
 }
 
+.header-container {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 1rem 0;
+  background-color: rgb(250 251 231);
+}
+
+.page-header {
+  background-color: #50a65d;
+  color: #232323;
+  padding: 0.25rem;
+  border-radius: 9999px;
+  width: 20rem;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transform: translateY(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.header-hidden {
+  transform: translateY(-200%);
+}
+
 .content-container {
   flex: 1;
-  padding: 1rem;
+  padding: 0 1rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .days-container {
@@ -147,28 +203,5 @@ function showDayDetails(date) {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-/* Add these new styles */
-.page-header {
-  background-color: #50a65d;
-  color: #232323;
-  padding: 0.25rem;
-  border-radius: 9999px;
-  width: 20rem;
-  margin: 1rem auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.material-icons {
-  font-size: 1.5rem;
-}
-
-.header-text {
-  font-size: 0.875rem;
-  font-weight: 500;
 }
 </style>

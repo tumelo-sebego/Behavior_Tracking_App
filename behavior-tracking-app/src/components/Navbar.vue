@@ -11,7 +11,10 @@
           :key="item.id"
           @click="navigateToGoal(item.id)"
           class="nav-button"
-          :class="{ 'active-tab': activeGoal === item.id }">
+          :class="{
+            'active-tab': activeGoal === item.id,
+            'active-view': isGoalViewActive(item.id),
+          }">
           <span class="material-icons icon-spacing">{{ item.icon }}</span>
           <span class="nav-text">{{ item.text }}</span>
         </button>
@@ -174,6 +177,11 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.removeEventListener("click", handleClickOutside);
 });
+
+// Function to determine if a goal view is active
+function isGoalViewActive(goalId) {
+  return route.path.includes(`${goalId}progress`);
+}
 </script>
 
 <style scoped>
@@ -220,14 +228,24 @@ onBeforeUnmount(() => {
 }
 
 .goals-submenu .nav-button {
-  background-color: #e2e8f0;
+  background-color: #e6e7e9;
+  border: 2px solid #232323;
   border-radius: 9999px;
   padding: 0.25rem;
+  color: #f1f3e6;
+}
+
+.goals-submenu .material-icons {
+  color: 232323;
+}
+.goals-submenu .nav-button.active-tab {
+  background-color: #50a65d;
   color: #232323;
 }
 
-.goals-submenu .nav-button.active-tab {
+.goals-submenu .nav-button.active-view {
   background-color: #81c784;
+  color: #232323;
 }
 
 .nav-button {
