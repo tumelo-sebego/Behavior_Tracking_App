@@ -22,6 +22,7 @@
 <script setup>
 import { computed } from "vue";
 import { useActivitiesStore } from "@/store/activities";
+import { useGoalSettingsStore } from "@/store/goalSettings";
 
 const props = defineProps({
   weekStart: {
@@ -32,21 +33,24 @@ const props = defineProps({
     type: Number,
     required: true,
   },
-  daysPerWeek: {
-    type: Number,
-    default: 5,
-  },
 });
 
 defineEmits(["show-details"]);
 
 const store = useActivitiesStore();
+const goalStore = useGoalSettingsStore();
+
+// Get the active goal's daysPerWeek
+const daysPerWeek = computed(() => {
+  const activeGoal = goalStore.getActiveGoal;
+  return activeGoal ? activeGoal.daysPerWeek : 5; // fallback to 5 if no active goal
+});
 
 // Get activities for this week
 const weekActivities = computed(() => {
   const startDate = new Date(props.weekStart);
   const endDate = new Date(startDate);
-  endDate.setDate(startDate.getDate() + props.daysPerWeek - 1);
+  endDate.setDate(startDate.getDate() + daysPerWeek.value - 1);
 
   return store.activities.filter((activity) => {
     const activityDate = new Date(activity.dateCreated);
@@ -73,8 +77,9 @@ const totalPoints = computed(() => {
     .reduce((total, activity) => total + activity.points, 0);
 });
 
+// Update percentage calculation to use daysPerWeek from active goal
 const percentageComplete = computed(() => {
-  const maxPoints = props.daysPerWeek * 100;
+  const maxPoints = daysPerWeek.value * 100;
   return Math.round((totalPoints.value / maxPoints) * 100);
 });
 
