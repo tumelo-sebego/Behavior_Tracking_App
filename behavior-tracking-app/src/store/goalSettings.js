@@ -66,12 +66,22 @@ export const useGoalSettingsStore = defineStore("goalSettings", {
       return state.goalSettings.find((goal) => goal.id === id);
     },
 
-    getActiveGoals: (state) => {
+    getActiveGoal: (state) => {
       const now = new Date();
-      return state.goalSettings.filter((goal) => {
-        const endDate = new Date(goal.endDate);
-        return endDate >= now;
-      });
+      // Find the most recently started goal that hasn't ended yet
+      return (
+        state.goalSettings
+          .filter((goal) => {
+            const endDate = new Date(goal.endDate);
+            return endDate >= now;
+          })
+          .sort((a, b) => {
+            // Sort by firstActiveDate (null values last)
+            if (!a.firstActiveDate) return 1;
+            if (!b.firstActiveDate) return -1;
+            return new Date(b.firstActiveDate) - new Date(a.firstActiveDate);
+          })[0] || null
+      );
     },
 
     getCompletedGoals: (state) => {
