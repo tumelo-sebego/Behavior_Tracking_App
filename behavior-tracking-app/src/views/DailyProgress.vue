@@ -72,7 +72,6 @@ const groupedActivities = computed(() => {
 function showDayDetails(date) {
   selectedDate.value = date.toISOString();
   dayDetailsVisible.value = true;
-  console.log(groupedActivities.value);
 }
 </script>
 
@@ -103,7 +102,7 @@ function showDayDetails(date) {
 .days-container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  padding-bottom: calc(1px + 4rem);
 }
 
 .day-item {

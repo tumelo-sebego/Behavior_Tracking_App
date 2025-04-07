@@ -1,6 +1,7 @@
 <template>
   <div class="day-item" @click="$emit('show-details')">
     <div class="day-content">
+      <div class="status-dot" :class="statusColorClass"></div>
       <div class="day-info">
         <div class="title">{{ formattedDate }}</div>
         <div class="time-range">
@@ -90,9 +91,47 @@ const totalPoints = computed(() => {
     .filter((activity) => activity.status === "done")
     .reduce((total, activity) => total + activity.points, 0);
 });
+
+// Add computed property for status color
+const statusColorClass = computed(() => {
+  const points = totalPoints.value;
+  if (points === 0) return "no-points";
+  if (points <= 25) return "low-points";
+  if (points <= 50) return "medium-points";
+  if (points <= 75) return "high-points";
+  return "max-points";
+});
 </script>
 
 <style scoped>
+.status-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.status-dot.no-points {
+  background-color: #232323;
+}
+
+.status-dot.low-points {
+  background-color: #8c8c8c;
+}
+
+.status-dot.medium-points {
+  background-color: #ebc22b;
+}
+
+.status-dot.high-points {
+  background-color: #36aafe;
+}
+
+.status-dot.max-points {
+  background-color: #50a65d;
+}
+
 .day-item {
   background-color: #eaeed3;
   border-radius: 1rem;
@@ -141,7 +180,7 @@ const totalPoints = computed(() => {
 }
 
 .time-text {
-  color: #50a65d;
+  color: #232323;
   font-size: 0.875rem;
 }
 
