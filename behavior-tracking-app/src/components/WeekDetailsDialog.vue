@@ -28,21 +28,21 @@
             text
             class="close-button" />
         </div>
-        <h2 class="dialog-title">Week {{ weekNumber }}</h2>
+        <h2 class="dialog-title">Week {{ week.weekNumber }}</h2>
       </div>
 
       <!-- Scrollable Content -->
       <div class="scrollable-content">
         <!-- Progress Circle -->
         <div class="progress-container">
-          <ProgressCircle :progress="percentageComplete" />
+          <ProgressCircle :progress="week.percentageComplete" />
         </div>
 
         <!-- Week Summary -->
         <div class="week-summary">
           <i class="pi pi-calendar"></i>
           <span class="summary-text"
-            >Active Days: {{ activeDays }}/{{ daysPerWeek }}</span
+            >Active Days: {{ week.activeDays }}/{{ week.daysPerWeek }}</span
           >
         </div>
 
@@ -73,25 +73,18 @@ import DayItem from "./DayItem.vue";
 import DayDetailsDialog from "./DayDetailsDialog.vue";
 
 const props = defineProps({
-  weekStart: {
-    type: String,
+  week: {
+    type: Object,
     required: true,
-  },
-  weekNumber: {
-    type: Number,
-    required: true,
-  },
-  daysPerWeek: {
-    type: Number,
-    required: true,
-  },
-  percentageComplete: {
-    type: Number,
-    required: true,
-  },
-  activeDays: {
-    type: Number,
-    required: true,
+    validator: (obj) => {
+      return [
+        "weekStart",
+        "weekNumber",
+        "daysPerWeek",
+        "percentageComplete",
+        "activeDays",
+      ].every((prop) => prop in obj);
+    },
   },
   visible: {
     type: Boolean,
@@ -106,9 +99,9 @@ const selectedDayDate = ref("");
 // Generate array of dates for the week
 const weekDays = computed(() => {
   const days = [];
-  const startDate = new Date(props.weekStart);
+  const startDate = new Date(props.week.weekStart);
 
-  for (let i = 0; i < props.daysPerWeek; i++) {
+  for (let i = 0; i < props.week.daysPerWeek; i++) {
     const currentDate = new Date(startDate);
     currentDate.setDate(startDate.getDate() + i);
     days.push({
