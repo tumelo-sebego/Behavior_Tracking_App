@@ -52,7 +52,7 @@
             v-for="day in weekDays"
             :key="day.date"
             :activity-date="day.date"
-            @show-details="showDayDetails" />
+            @show-details="showDayDetails(day.date)" />
         </div>
       </div>
 
@@ -113,6 +113,9 @@ const weekDays = computed(() => {
 });
 
 function showDayDetails(date) {
+  console.log("Received date:", date); // Debug log
+  if (!date) return;
+
   selectedDayDate.value = date;
   dayDetailsVisible.value = true;
 }

@@ -117,7 +117,13 @@ function handleScroll(event) {
 }
 
 function showWeekDetails(week) {
-  selectedWeek.value = week;
+  selectedWeek.value = {
+    weekStart: week.weekStart,
+    weekNumber: week.weekNumber,
+    daysPerWeek: week.daysPerWeek || 5,
+    percentageComplete: week.percentageComplete || 0,
+    activeDays: week.activeDays || 0,
+  };
   weekDetailsVisible.value = true;
 }
 </script>

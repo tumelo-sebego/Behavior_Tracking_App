@@ -34,6 +34,7 @@ const store = useActivitiesStore();
 
 // Get activities for this day using getActivitiesByDate
 const dayActivities = computed(() => {
+  console.log("Activity Date: ", props.activityDate);
   return store.getActivitiesByDate(props.activityDate);
 });
 

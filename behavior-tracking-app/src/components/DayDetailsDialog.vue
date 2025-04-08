@@ -91,6 +91,7 @@ const selectedActivityId = ref(null);
 
 // Get activities for this day
 const dayActivities = computed(() => {
+  console.log("Activity Date: ", props.activityDate);
   return store.getActivitiesByDate(props.activityDate);
 });
 

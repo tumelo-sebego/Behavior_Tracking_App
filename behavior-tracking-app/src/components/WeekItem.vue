@@ -5,7 +5,7 @@
       <div class="week-info">
         <div class="title">Week {{ weekNumber }}</div>
         <div class="active-days">
-          <i class="pi pi-calendar"></i>
+          <i class="pi pi-bolt"></i>
           <span class="days-text"
             >Active Days: {{ activeDays }}/{{ daysPerWeek }}</span
           >
@@ -62,7 +62,7 @@ const weekActivities = computed(() => {
 const activeDays = computed(() => {
   const daysWithPoints = new Set();
   weekActivities.value.forEach((activity) => {
-    if (activity.status === "done" && activity.points > 0) {
+    if (activity.points > 0) {
       const date = new Date(activity.dateCreated).toDateString();
       daysWithPoints.add(date);
     }
