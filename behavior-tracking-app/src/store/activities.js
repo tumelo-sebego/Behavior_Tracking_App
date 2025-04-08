@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useGoalSettingsStore } from "@/store/goalSettings";
 
 export const useActivitiesStore = defineStore("activities", {
   state: () => ({
