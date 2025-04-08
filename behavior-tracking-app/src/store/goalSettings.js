@@ -58,6 +58,17 @@ export const useGoalSettingsStore = defineStore("goalSettings", {
         endDate: null, // firstActiveDate is null
         completionRate: 0,
       },
+      {
+        id: 6,
+        title: "New Active Challenge",
+        dateSet: "2025-04-08T08:00:00Z",
+        firstActiveDate: "2025-04-08T09:00:00Z",
+        totalPoints: 0,
+        totalDays: 14,
+        daysPerWeek: 5,
+        endDate: "2025-04-22T23:59:59Z",
+        completionRate: 0,
+      },
     ],
   }),
 

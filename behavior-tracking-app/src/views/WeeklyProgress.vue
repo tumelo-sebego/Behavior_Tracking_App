@@ -66,7 +66,6 @@ const groupedWeeks = computed(() => {
   const startDate = new Date(activeGoal.firstActiveDate);
   const endDate = new Date(activeGoal.endDate);
   const weeks = [];
-
   let currentDate = new Date(startDate);
   let weekNumber = 1;
 
@@ -75,10 +74,32 @@ const groupedWeeks = computed(() => {
     const weekEnd = new Date(currentDate);
     weekEnd.setDate(weekEnd.getDate() + (activeGoal.daysPerWeek - 1));
 
+    // Get activities for this week
+    const weekActivities = store.activities.filter((activity) => {
+      const activityDate = new Date(activity.dateCreated);
+      return activityDate >= currentDate && activityDate <= weekEnd;
+    });
+
+    // Calculate percentage complete and active days
+    const totalPoints = weekActivities
+      .filter((activity) => activity.status === "done")
+      .reduce((sum, activity) => sum + activity.points, 0);
+
+    const maxPoints = activeGoal.daysPerWeek * 100;
+    const percentageComplete = Math.round((totalPoints / maxPoints) * 100);
+
+    const activeDays = new Set(
+      weekActivities
+        .filter((activity) => activity.status === "done" && activity.points > 0)
+        .map((activity) => new Date(activity.dateCreated).toDateString()),
+    ).size;
+
     weeks.push({
       weekStart,
       weekEnd: weekEnd.toISOString(),
       weekNumber,
+      percentageComplete,
+      activeDays,
     });
 
     currentDate.setDate(currentDate.getDate() + activeGoal.daysPerWeek);
