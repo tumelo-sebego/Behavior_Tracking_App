@@ -28,22 +28,32 @@
             text
             class="close-button" />
         </div>
-        <h2 class="dialog-title">Week {{ week.weekNumber }}</h2>
       </div>
 
       <!-- Scrollable Content -->
       <div class="scrollable-content">
+        <h2 class="dialog-title">Week {{ week.weekNumber }}</h2>
+
         <!-- Progress Circle -->
         <div class="progress-container">
           <ProgressCircle :progress="week.percentageComplete" />
         </div>
 
-        <!-- Week Summary -->
-        <div class="week-summary">
-          <i class="pi pi-bolt"></i>
-          <span class="summary-text"
-            >Active Days: {{ week.activeDays }}/{{ week.daysPerWeek }}</span
-          >
+        <!-- Duration Summary -->
+        <div class="duration-summary">
+          <!-- Active Days Container (Left) -->
+          <div class="summary-item">
+            <i class="pi pi-bolt"></i>
+            <span class="summary-text"
+              >Active Days: {{ week.activeDays }}/{{ week.daysPerWeek }}</span
+            >
+          </div>
+
+          <!-- Date Range Container (Right) -->
+          <div class="summary-item dates">
+            <i class="pi pi-calendar"></i>
+            <span class="summary-text">{{ formattedDateRange }}</span>
+          </div>
         </div>
 
         <!-- Days List -->
@@ -112,6 +122,20 @@ const weekDays = computed(() => {
   return days;
 });
 
+const formattedDateRange = computed(() => {
+  const startDate = new Date(props.week.weekStart);
+  const endDate = new Date(startDate);
+  endDate.setDate(startDate.getDate() + props.week.daysPerWeek - 1);
+
+  const formatDate = (date) => {
+    const day = date.getDate();
+    const month = date.toLocaleDateString("en-US", { month: "long" });
+    return `${day} ${month}`;
+  };
+
+  return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+});
+
 function showDayDetails(date) {
   console.log("Received date:", date); // Debug log
   if (!date) return;
@@ -167,7 +191,8 @@ function onClose() {
 }
 
 .dialog-title {
-  margin-top: 2rem;
+  margin: 1rem 0 2rem;
+  margin-bottom: 0;
   font-size: 1.5rem;
   font-weight: 500;
   color: #232323;
@@ -177,39 +202,51 @@ function onClose() {
 .scrollable-content {
   flex: 1;
   overflow-y: auto;
-  padding: 0 2rem 2rem;
+  padding: 1rem 2rem 2rem;
   -webkit-overflow-scrolling: touch;
 }
 
 .progress-container {
-  margin: 2rem 0;
+  margin: 0 0 1rem;
+  margin-bottom: 0;
   display: flex;
   justify-content: center;
 }
 
-.week-summary {
+.duration-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0 2rem;
+  color: #232323;
+  font-size: 1rem;
+  padding: 0 1rem;
+}
+
+.summary-item {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 0.5rem;
-  margin: -1rem 0 2rem;
-  color: #232323;
 }
 
-.week-summary i {
+.summary-item i {
   font-size: 1.25rem;
   color: #50a65d;
 }
 
 .summary-text {
-  font-size: 1.125rem;
   font-weight: 500;
+}
+
+.dates {
+  font-size: 0.875rem;
 }
 
 .days-container {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-top: 1rem;
 }
 
 :deep(.p-dialog-mask) {
