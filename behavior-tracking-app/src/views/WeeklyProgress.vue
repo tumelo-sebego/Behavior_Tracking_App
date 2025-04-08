@@ -24,10 +24,7 @@
 
         <WeekDetailsDialog
           v-model:visible="weekDetailsVisible"
-          :week-start="selectedWeek.weekStart"
-          :week-number="selectedWeek.weekNumber"
-          :percentage-complete="selectedWeek.percentageComplete"
-          :active-days="selectedWeek.activeDays"
+          :week="selectedWeek"
           v-if="weekDetailsVisible" />
       </div>
 
@@ -54,6 +51,7 @@ const weekDetailsVisible = ref(false);
 const selectedWeek = ref({
   weekStart: "",
   weekNumber: 1,
+  daysPerWeek: 5,
   percentageComplete: 0,
   activeDays: 0,
 });
@@ -119,12 +117,7 @@ function handleScroll(event) {
 }
 
 function showWeekDetails(week) {
-  selectedWeek.value = {
-    weekStart: week.weekStart,
-    weekNumber: week.weekNumber,
-    percentageComplete: 0, // This will be calculated in WeekItem
-    activeDays: 0, // This will be calculated in WeekItem
-  };
+  selectedWeek.value = week;
   weekDetailsVisible.value = true;
 }
 </script>
