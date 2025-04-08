@@ -13,6 +13,11 @@ const routes = [
   { path: "/add-task", component: AddTask },
   { path: "/dailyprogress", component: DailyProgress },
   { path: "/profile", component: Profile },
+  {
+    path: "/weeklyprogress",
+    name: "WeeklyProgress",
+    component: () => import("@/views/WeeklyProgress.vue"),
+  },
 ];
 
 const router = createRouter({
