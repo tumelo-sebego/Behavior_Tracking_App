@@ -88,7 +88,7 @@ const groupedWeeks = computed(() => {
 
     const activeDays = new Set(
       weekActivities
-        .filter((activity) => activity.status === "done" && activity.points > 0)
+        .filter((activity) => activity.points > 0)
         .map((activity) => new Date(activity.dateCreated).toDateString()),
     ).size;
 

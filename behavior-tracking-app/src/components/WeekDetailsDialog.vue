@@ -40,7 +40,7 @@
 
         <!-- Week Summary -->
         <div class="week-summary">
-          <i class="pi pi-calendar"></i>
+          <i class="pi pi-bolt"></i>
           <span class="summary-text"
             >Active Days: {{ week.activeDays }}/{{ week.daysPerWeek }}</span
           >
