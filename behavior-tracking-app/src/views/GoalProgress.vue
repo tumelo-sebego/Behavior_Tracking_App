@@ -56,7 +56,6 @@
         <!-- Progress Trend Container -->
         <div class="trend-container">
           <div class="trend-header">
-            <i class="pi pi-chart-line trend-icon"></i>
             <span class="trend-text">Progress Trend</span>
           </div>
 
@@ -74,11 +73,13 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useGoalSettingsStore } from "@/store/goalSettings";
+import { useActivitiesStore } from "@/store/activities"; // Add this import
 import ProgressCircle from "@/components/ProgressCircle.vue";
 import Navbar from "@/components/Navbar.vue";
-import { Chart } from "primevue/chart";
+import Chart from "primevue/chart";
 
 const goalStore = useGoalSettingsStore();
+const store = useActivitiesStore(); // Add this line
 const contentContainer = ref(null);
 const isHeaderHidden = ref(false);
 let lastScrollPosition = 0;
@@ -323,20 +324,15 @@ const chartOptions = computed(() => ({
 .trend-container {
   margin: 2rem 0;
   padding: 1.5rem;
-  background-color: #eaeed3;
+  background-color: #e6e7e9;
   border-radius: 1rem;
 }
 
 .trend-header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: center;
   margin-bottom: 1.5rem;
-}
-
-.trend-icon {
-  color: #50a65d;
-  font-size: 1.25rem;
 }
 
 .trend-text {
