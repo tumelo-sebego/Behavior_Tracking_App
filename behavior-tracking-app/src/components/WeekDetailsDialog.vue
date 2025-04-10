@@ -220,7 +220,7 @@ function onClose() {
   margin: 1rem 0 2rem;
   color: #232323;
   font-size: 1rem;
-  padding: 0 1rem;
+  padding: 0;
 }
 
 .summary-item {
@@ -245,7 +245,6 @@ function onClose() {
 .days-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   margin-top: 1rem;
 }
 

@@ -91,7 +91,6 @@ const selectedActivityId = ref(null);
 
 // Get activities for this day
 const dayActivities = computed(() => {
-  console.log("Activity Date: ", props.activityDate);
   return store.getActivitiesByDate(props.activityDate);
 });
 
@@ -223,6 +222,7 @@ function onClose() {
 
 .progress-container {
   margin: 1rem 0;
+  margin-bottom: 0;
   margin-top: 0;
   display: flex;
   justify-content: center;
@@ -234,8 +234,7 @@ function onClose() {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  margin-top: -2rem;
-  margin-bottom: 2rem;
+  margin: 1rem 0 2rem;
   color: #232323;
   font-size: 1rem;
 }
@@ -251,7 +250,6 @@ function onClose() {
 .activities-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
 }
 
 :deep(.p-dialog-mask) {
