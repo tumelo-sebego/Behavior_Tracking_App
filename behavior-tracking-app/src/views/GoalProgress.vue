@@ -63,6 +63,13 @@
             <Chart type="line" :data="chartData" :options="chartOptions" />
           </div>
         </div>
+
+        <div class="impression-pill">
+          <div class="left-group">
+            <div class="status-dot" :class="impressionColorClass"></div>
+            <span class="impression-text">{{ impressionText }}</span>
+          </div>
+        </div>
       </div>
 
       <Navbar :active="'calendar'" :activeGoal="'goal'" />
@@ -183,6 +190,51 @@ const chartOptions = computed(() => ({
     },
   },
 }));
+
+const impressionData = computed(() => {
+  if (!activeGoal.value) return { color: "no-points", text: "No active goal" };
+
+  const completionRate = activeGoal.value.completionRate;
+  const pointsRatio =
+    (activeGoal.value.totalPoints / possiblePoints.value) * 100;
+
+  // Get trend direction from last 3 days of chart data
+  const recentPoints = chartData.value?.datasets[0].data.slice(-3) || [];
+  const trendDirection =
+    recentPoints.length >= 2
+      ? recentPoints[recentPoints.length - 1] -
+        recentPoints[recentPoints.length - 2]
+      : 0;
+
+  if (completionRate >= 90) {
+    return { color: "max-points", text: "Perfect! Keep it up!" };
+  }
+
+  if (completionRate >= 75) {
+    return trendDirection >= 0
+      ? { color: "high-points", text: "Excellent progress!" }
+      : { color: "high-points", text: "Stay focused!" };
+  }
+
+  if (completionRate >= 50) {
+    return trendDirection > 0
+      ? { color: "medium-points", text: "You're doing better than before" }
+      : { color: "medium-points", text: "Keep pushing!" };
+  }
+
+  if (completionRate >= 25) {
+    return trendDirection > 0
+      ? { color: "low-points", text: "Making improvement" }
+      : { color: "low-points", text: "You're falling behind" };
+  }
+
+  return trendDirection > 0
+    ? { color: "no-points", text: "Starting to improve" }
+    : { color: "no-points", text: "Not good, time to focus" };
+});
+
+const impressionColorClass = computed(() => impressionData.value.color);
+const impressionText = computed(() => impressionData.value.text);
 </script>
 
 <style scoped>
@@ -236,6 +288,7 @@ const chartOptions = computed(() => ({
   flex: 1;
   padding: 0 1rem;
   overflow-y: auto;
+  margin-bottom: 2rem;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -342,7 +395,54 @@ const chartOptions = computed(() => ({
 }
 
 .chart-container {
-  height: 200px;
+  height: 140px;
   width: 100%;
+}
+
+.impression-pill {
+  margin: 1rem 0;
+  padding: 0.75rem 1.5rem;
+  background-color: #e6e7e9;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  color: #232323;
+  height: 3.5rem;
+}
+
+.status-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  margin-right: 0.75rem;
+}
+
+.status-dot.no-points {
+  background-color: #232323;
+}
+
+.status-dot.low-points {
+  background-color: #8c8c8c;
+}
+
+.status-dot.medium-points {
+  background-color: #ebc22b;
+}
+
+.status-dot.high-points {
+  background-color: #36aafe;
+}
+
+.status-dot.max-points {
+  background-color: #50a65d;
+}
+
+.impression-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #232323;
 }
 </style>
