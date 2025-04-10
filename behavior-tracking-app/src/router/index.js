@@ -18,6 +18,11 @@ const routes = [
     name: "WeeklyProgress",
     component: () => import("@/views/WeeklyProgress.vue"),
   },
+  {
+    path: "/goal-progress",
+    name: "GoalProgress",
+    component: () => import("@/views/GoalProgress.vue"),
+  },
 ];
 
 const router = createRouter({
