@@ -46,9 +46,9 @@
           <div class="right-group">
             <span class="vertical-line"></span>
             <div class="points-count">
-              <span class="count-value">{{
-                activeGoal?.totalPoints || 0
-              }}</span>
+              <span class="count-value"
+                >{{ activeGoal?.totalPoints || 0 }}/{{ possiblePoints }}</span
+              >
             </div>
           </div>
         </div>
@@ -83,6 +83,12 @@ const daysLeft = computed(() => {
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   return Math.max(0, diffDays);
+});
+
+// Add computed property for possible points
+const possiblePoints = computed(() => {
+  if (!activeGoal.value) return 0;
+  return activeGoal.value.totalDays * 100; // Each day can earn 100 points
 });
 
 function handleScroll(event) {
