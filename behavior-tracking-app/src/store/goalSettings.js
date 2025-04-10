@@ -158,5 +158,19 @@ export const useGoalSettingsStore = defineStore("goalSettings", {
       };
       this.goalSettings.push(newGoal);
     },
+
+    updateGoalProgress({ goalId, points }) {
+      const goal = this.goalSettings.find((g) => g.id === goalId);
+      if (!goal) return;
+
+      // Add points to total
+      goal.totalPoints += points;
+
+      // Recalculate completion rate
+      const maxPossiblePoints = goal.totalDays * 100;
+      goal.completionRate = Math.round(
+        (goal.totalPoints / maxPossiblePoints) * 100,
+      );
+    },
   },
 });
