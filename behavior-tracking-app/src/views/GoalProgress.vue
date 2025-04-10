@@ -52,6 +52,18 @@
             </div>
           </div>
         </div>
+
+        <!-- Progress Trend Container -->
+        <div class="trend-container">
+          <div class="trend-header">
+            <i class="pi pi-chart-line trend-icon"></i>
+            <span class="trend-text">Progress Trend</span>
+          </div>
+
+          <div class="chart-container">
+            <Chart type="line" :data="chartData" :options="chartOptions" />
+          </div>
+        </div>
       </div>
 
       <Navbar :active="'calendar'" :activeGoal="'goal'" />
@@ -64,6 +76,7 @@ import { ref, computed } from "vue";
 import { useGoalSettingsStore } from "@/store/goalSettings";
 import ProgressCircle from "@/components/ProgressCircle.vue";
 import Navbar from "@/components/Navbar.vue";
+import { Chart } from "primevue/chart";
 
 const goalStore = useGoalSettingsStore();
 const contentContainer = ref(null);
@@ -99,6 +112,76 @@ function handleScroll(event) {
     lastScrollPosition = currentScroll;
   }
 }
+
+// Add to script setup section
+const chartData = computed(() => {
+  if (!activeGoal.value) return null;
+
+  const startDate = new Date(activeGoal.value.firstActiveDate);
+  const endDate = new Date(activeGoal.value.endDate);
+  const days = [];
+  const points = [];
+
+  let currentDate = new Date(startDate);
+  while (currentDate <= endDate) {
+    days.push(""); // Empty string for x-axis labels
+    // Get points for this day from activities
+    const dayPoints = store
+      .getActivitiesByDate(currentDate.toISOString())
+      .filter((activity) => activity.status === "done")
+      .reduce((sum, activity) => sum + activity.points, 0);
+    points.push(dayPoints);
+
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return {
+    labels: days,
+    datasets: [
+      {
+        label: "Points",
+        data: points,
+        fill: false,
+        borderColor: "#50a65d",
+        tension: 0.4,
+        pointBackgroundColor: "#50a65d",
+      },
+    ],
+  };
+});
+
+const chartOptions = computed(() => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: false,
+    },
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      max: 100,
+      ticks: {
+        stepSize: 100,
+        color: "#232323",
+      },
+    },
+    x: {
+      grid: {
+        display: false,
+      },
+      ticks: {
+        display: false,
+      },
+      title: {
+        display: true,
+        text: "Days",
+        color: "#232323",
+      },
+    },
+  },
+}));
 </script>
 
 <style scoped>
@@ -235,5 +318,35 @@ function handleScroll(event) {
   margin: 0;
   padding: 0;
   line-height: 1.2;
+}
+
+.trend-container {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: #eaeed3;
+  border-radius: 1rem;
+}
+
+.trend-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.trend-icon {
+  color: #50a65d;
+  font-size: 1.25rem;
+}
+
+.trend-text {
+  color: #232323;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.chart-container {
+  height: 200px;
+  width: 100%;
 }
 </style>
