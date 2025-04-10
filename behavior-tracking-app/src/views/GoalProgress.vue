@@ -36,6 +36,22 @@
             </div>
           </div>
         </div>
+
+        <!-- Points Container -->
+        <div class="points-pill">
+          <div class="left-group">
+            <i class="pi pi-star-fill points-icon"></i>
+            <span class="points-text">Total Points</span>
+          </div>
+          <div class="right-group">
+            <span class="vertical-line"></span>
+            <div class="points-count">
+              <span class="count-value">{{
+                activeGoal?.totalPoints || 0
+              }}</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <Navbar :active="'calendar'" :activeGoal="'goal'" />
@@ -153,6 +169,20 @@ function handleScroll(event) {
   color: #232323;
 }
 
+.points-pill {
+  margin: 1rem 0;
+  padding: 0.75rem 1.5rem;
+  background-color: #e6e7e9;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  color: #232323;
+}
+
 .left-group {
   display: flex;
   align-items: center;
@@ -170,7 +200,17 @@ function handleScroll(event) {
   font-size: 1.25rem;
 }
 
+.points-icon {
+  color: #ebc22b;
+  font-size: 1.25rem;
+}
+
 .days-text {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.points-text {
   font-size: 1rem;
   font-weight: 500;
 }
@@ -188,16 +228,17 @@ function handleScroll(event) {
   line-height: 1.1;
 }
 
+.points-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
 .count-value {
   font-size: 1rem;
   font-weight: 700;
   color: #232323;
-}
-
-.count-label {
-  font-size: 0.75rem;
-  color: #6b7280;
-  text-transform: uppercase;
 }
 
 .goal-title-container {
