@@ -74,6 +74,7 @@ const activeGoal = computed(() => goalStore.getActiveGoal);
 
 // Calculate days left until goal completion
 const daysLeft = computed(() => {
+  console.log("activeGoal.value", activeGoal.value);
   if (!activeGoal.value?.endDate) return 0;
 
   const endDate = new Date(activeGoal.value.endDate);
@@ -155,20 +156,7 @@ function handleScroll(event) {
   max-width: 200px;
 }
 
-.days-left-pill {
-  margin: 1rem 0;
-  padding: 0.75rem 1.5rem;
-  background-color: #e6e7e9;
-  border-radius: 9999px;
-  font-size: 1rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  color: #232323;
-}
-
+.days-left-pill,
 .points-pill {
   margin: 1rem 0;
   padding: 0.75rem 1.5rem;
@@ -177,22 +165,35 @@ function handleScroll(event) {
   font-size: 1rem;
   font-weight: 500;
   display: flex;
-  align-items: center;
+  align-items: stretch; /* Changed from center to stretch */
   justify-content: space-between;
   width: 100%;
   color: #232323;
+  height: 3.5rem; /* Added fixed height */
 }
 
-.left-group {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
+.left-group,
 .right-group {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  height: 100%; /* Added to ensure full height */
+}
+
+.vertical-line {
+  width: 2px;
+  height: 100%; /* Changed to 100% */
+  background-color: #232323;
+  align-self: stretch; /* Added to ensure line stretches */
+}
+
+/* Remove line-height from count containers */
+.days-count,
+.points-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Added for vertical centering */
 }
 
 .sun-icon {
@@ -213,32 +214,6 @@ function handleScroll(event) {
 .points-text {
   font-size: 1rem;
   font-weight: 500;
-}
-
-.vertical-line {
-  width: 2px;
-  height: 1.5rem;
-  background-color: #232323;
-}
-
-.days-count {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  line-height: 1.1;
-}
-
-.points-count {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  line-height: 1.1;
-}
-
-.count-value {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #232323;
 }
 
 .goal-title-container {

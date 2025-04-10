@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useActivitiesStore } from "./activities";
 
 export const useGoalSettingsStore = defineStore("goalSettings", {
   state: () => ({
@@ -79,20 +80,47 @@ export const useGoalSettingsStore = defineStore("goalSettings", {
 
     getActiveGoal: (state) => {
       const now = new Date();
+      const activitiesStore = useActivitiesStore();
+
       // Find the most recently started goal that hasn't ended yet
-      return (
-        state.goalSettings
-          .filter((goal) => {
-            const endDate = new Date(goal.endDate);
-            return endDate >= now;
-          })
-          .sort((a, b) => {
-            // Sort by firstActiveDate (null values last)
-            if (!a.firstActiveDate) return 1;
-            if (!b.firstActiveDate) return -1;
-            return new Date(b.firstActiveDate) - new Date(a.firstActiveDate);
-          })[0] || null
+      const activeGoal = state.goalSettings
+        .filter((goal) => {
+          const endDate = new Date(goal.endDate);
+          return endDate >= now;
+        })
+        .sort((a, b) => {
+          if (!a.firstActiveDate) return 1;
+          if (!b.firstActiveDate) return -1;
+          return new Date(b.firstActiveDate) - new Date(a.firstActiveDate);
+        })[0];
+
+      if (!activeGoal) return null;
+
+      // Get all activities within the goal's date range
+      const goalActivities = activitiesStore.activities.filter((activity) => {
+        const activityDate = new Date(activity.dateCreated);
+        const startDate = new Date(activeGoal.firstActiveDate);
+        const endDate = new Date(activeGoal.endDate);
+        return activityDate >= startDate && activityDate <= endDate;
+      });
+
+      // Calculate total points from completed activities
+      const totalPoints = goalActivities
+        .filter((activity) => activity.status === "done")
+        .reduce((sum, activity) => sum + activity.points, 0);
+
+      // Calculate completion rate
+      const maxPossiblePoints = activeGoal.totalDays * 100;
+      const completionRate = Math.round(
+        (totalPoints / maxPossiblePoints) * 100,
       );
+
+      // Return goal with calculated values
+      return {
+        ...activeGoal,
+        totalPoints,
+        completionRate,
+      };
     },
 
     getCompletedGoals: (state) => {

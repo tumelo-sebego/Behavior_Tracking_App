@@ -532,5 +532,31 @@ export const useActivitiesStore = defineStore("activities", {
         activity.timeDone = null;
       }
     },
+    markActivityAsDone(activityId) {
+      const activity = this.activities.find((a) => a.id === activityId);
+      if (!activity) return;
+
+      // Update activity status
+      activity.status = "done";
+      activity.timeDone = new Date().toISOString();
+
+      // Update goal progress
+      const goalStore = useGoalSettingsStore();
+      const activeGoal = goalStore.getActiveGoal;
+
+      if (activeGoal) {
+        const activityDate = new Date(activity.dateCreated);
+        const goalStartDate = new Date(activeGoal.firstActiveDate);
+        const goalEndDate = new Date(activeGoal.endDate);
+
+        // Only update goal if activity is within goal period
+        if (activityDate >= goalStartDate && activityDate <= goalEndDate) {
+          goalStore.updateGoalProgress({
+            goalId: activeGoal.id,
+            points: activity.points,
+          });
+        }
+      }
+    },
   },
 });
