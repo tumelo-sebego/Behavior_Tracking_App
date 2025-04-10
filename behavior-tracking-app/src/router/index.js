@@ -19,7 +19,7 @@ const routes = [
     component: () => import("@/views/WeeklyProgress.vue"),
   },
   {
-    path: "/goal-progress",
+    path: "/goalprogress",
     name: "GoalProgress",
     component: () => import("@/views/GoalProgress.vue"),
   },

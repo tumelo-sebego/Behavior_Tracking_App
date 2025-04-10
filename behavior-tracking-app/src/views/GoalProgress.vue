@@ -4,9 +4,14 @@
       <!-- Sticky Header -->
       <div class="header-container">
         <div class="page-header" :class="{ 'header-hidden': isHeaderHidden }">
-          <span class="material-icons">flag</span>
+          <span class="material-icons">emoji_events</span>
           <span class="header-text">Goal Progress</span>
         </div>
+      </div>
+
+      <!-- Add goal title container -->
+      <div class="goal-title-container">
+        <h2 class="goal-title">{{ activeGoal?.title || "No Active Goal" }}</h2>
       </div>
 
       <div
@@ -28,7 +33,6 @@
             <span class="vertical-line"></span>
             <div class="days-count">
               <span class="count-value">{{ daysLeft }}</span>
-              <span class="count-label">days</span>
             </div>
           </div>
         </div>
@@ -129,7 +133,7 @@ function handleScroll(event) {
 }
 
 .progress-container {
-  margin: 2rem auto;
+  margin: 0 auto;
   display: flex;
   justify-content: center;
   max-width: 200px;
@@ -185,7 +189,7 @@ function handleScroll(event) {
 }
 
 .count-value {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #232323;
 }
@@ -194,5 +198,20 @@ function handleScroll(event) {
   font-size: 0.75rem;
   color: #6b7280;
   text-transform: uppercase;
+}
+
+.goal-title-container {
+  padding: 1.5rem 2rem;
+  background-color: rgb(250 251 231);
+  text-align: center;
+}
+
+.goal-title {
+  color: #232323;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
 }
 </style>
