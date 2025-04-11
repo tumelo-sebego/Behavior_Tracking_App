@@ -40,12 +40,14 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useActivitiesStore } from "@/store/activities";
+import { useGoalSettingsStore } from "@/store/goalSettings";
 import DayItem from "@/components/DayItem.vue";
 import Navbar from "@/components/Navbar.vue";
 import ActivityTimer from "@/components/ActivityTimer.vue";
 import DayDetailsDialog from "@/components/DayDetailsDialog.vue";
 
 const store = useActivitiesStore();
+const goalStore = useGoalSettingsStore();
 const dialogVisible = ref(false);
 const selectedActivityId = ref(null);
 const dayDetailsVisible = ref(false);
@@ -74,11 +76,20 @@ function handleScroll(event) {
 
 // Group activities by date
 const groupedActivities = computed(() => {
-  // Get all activities from the store
-  const activities = store.activities;
+  const activeGoal = goalStore.getActiveGoal;
+  if (!activeGoal || !activeGoal.firstActiveDate) return [];
 
-  const groups = activities.reduce((acc, activity) => {
-    // Create a date string for grouping (YYYY-MM-DD)
+  const activities = store.activities;
+  const goalStartDate = new Date(activeGoal.firstActiveDate);
+  const goalEndDate = new Date(activeGoal.endDate);
+
+  // Filter activities within goal date range
+  const goalActivities = activities.filter((activity) => {
+    const activityDate = new Date(activity.dateCreated);
+    return activityDate >= goalStartDate && activityDate <= goalEndDate;
+  });
+
+  const groups = goalActivities.reduce((acc, activity) => {
     const date = new Date(activity.dateCreated).toISOString().split("T")[0];
 
     if (!acc[date]) {
@@ -96,7 +107,7 @@ const groupedActivities = computed(() => {
 });
 
 function showDayDetails(date) {
-  selectedDate.value = date.toISOString();
+  selectedDate.value = date;
   dayDetailsVisible.value = true;
 }
 </script>

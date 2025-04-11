@@ -195,17 +195,36 @@ const impressionData = computed(() => {
   if (!activeGoal.value) return { color: "no-points", text: "No active goal" };
 
   const completionRate = activeGoal.value.completionRate;
-  const pointsRatio =
-    (activeGoal.value.totalPoints / possiblePoints.value) * 100;
 
-  // Get trend direction from last 3 days of chart data
-  const recentPoints = chartData.value?.datasets[0].data.slice(-3) || [];
+  // Get recent activities (last 3 days including today)
+  const today = new Date();
+  const threeDaysAgo = new Date(today);
+  threeDaysAgo.setDate(today.getDate() - 2); // -2 to include today
+
+  const recentActivities = store.activities.filter((activity) => {
+    const activityDate = new Date(activity.dateCreated);
+    return (
+      activityDate >= threeDaysAgo &&
+      activityDate <= today &&
+      activity.status === "done"
+    );
+  });
+
+  // Calculate recent trend
+  const recentDailyPoints = {};
+  recentActivities.forEach((activity) => {
+    const date = new Date(activity.dateCreated).toDateString();
+    recentDailyPoints[date] = (recentDailyPoints[date] || 0) + activity.points;
+  });
+
+  const recentPointsArray = Object.values(recentDailyPoints);
   const trendDirection =
-    recentPoints.length >= 2
-      ? recentPoints[recentPoints.length - 1] -
-        recentPoints[recentPoints.length - 2]
+    recentPointsArray.length >= 2
+      ? recentPointsArray[recentPointsArray.length - 1] -
+        recentPointsArray[recentPointsArray.length - 2]
       : 0;
 
+  // Determine impression based on both overall progress and recent activity
   if (completionRate >= 90) {
     return { color: "max-points", text: "Perfect! Keep it up!" };
   }
@@ -222,7 +241,10 @@ const impressionData = computed(() => {
       : { color: "medium-points", text: "Keep pushing!" };
   }
 
-  if (completionRate >= 25) {
+  if (
+    completionRate >= 25 ||
+    recentPointsArray.some((points) => points >= 50)
+  ) {
     return trendDirection > 0
       ? { color: "low-points", text: "Making improvement" }
       : { color: "low-points", text: "You're falling behind" };
@@ -288,7 +310,7 @@ const impressionText = computed(() => impressionData.value.text);
   flex: 1;
   padding: 0 1rem;
   overflow-y: auto;
-  margin-bottom: 2rem;
+  margin-bottom: 4rem;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -400,7 +422,6 @@ const impressionText = computed(() => impressionData.value.text);
 }
 
 .impression-pill {
-  margin: 1rem 0;
   padding: 0.75rem 1.5rem;
   background-color: #e6e7e9;
   border-radius: 9999px;
