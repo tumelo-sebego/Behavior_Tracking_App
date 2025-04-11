@@ -162,7 +162,7 @@ export const useGoalSettingsStore = defineStore("goalSettings", {
     updateGoalProgress({ goalId, points }) {
       const goal = this.goalSettings.find((g) => g.id === goalId);
       if (!goal) return;
-
+      console.log("Updating goal progress:", goalId, points);
       // Add points to total
       goal.totalPoints += points;
 

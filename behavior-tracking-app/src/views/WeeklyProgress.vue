@@ -15,11 +15,10 @@
         ref="contentContainer">
         <div class="weeks-container">
           <WeekItem
-            v-for="(week, index) in groupedWeeks"
+            v-for="week in groupedWeeks"
             :key="week.weekStart"
-            :week-start="week.weekStart"
-            :week-number="index + 1"
-            @show-details="showWeekDetails(week)" />
+            :week="week"
+            @show-details="showWeekDetails" />
         </div>
 
         <WeekDetailsDialog
@@ -75,27 +74,39 @@ const groupedWeeks = computed(() => {
     // Get activities for this week
     const weekActivities = store.activities.filter((activity) => {
       const activityDate = new Date(activity.dateCreated);
-      return activityDate >= currentDate && activityDate <= weekEnd;
+      // Normalize dates by setting them to midnight
+      activityDate.setHours(0, 0, 0, 0);
+      const startOfDay = new Date(currentDate);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(weekEnd);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const isInRange = activityDate >= startOfDay && activityDate <= endOfDay;
+      const isDone = activity.status === "done";
+
+      return isInRange && isDone;
     });
+    // console.log("week activities: ", weekActivities);
 
-    // Calculate percentage complete and active days
-    const totalPoints = weekActivities
-      .filter((activity) => activity.status === "done")
-      .reduce((sum, activity) => sum + activity.points, 0);
+    // Calculate active days (unique days with completed activities)
+    const activeDays = new Set(
+      weekActivities.map((activity) =>
+        new Date(activity.dateCreated).toDateString(),
+      ),
+    ).size;
 
+    // Calculate percentage complete
+    const totalPoints = weekActivities.reduce(
+      (sum, activity) => sum + activity.points,
+      0,
+    );
     const maxPoints = activeGoal.daysPerWeek * 100;
     const percentageComplete = Math.round((totalPoints / maxPoints) * 100);
 
-    const activeDays = new Set(
-      weekActivities
-        .filter((activity) => activity.points > 0)
-        .map((activity) => new Date(activity.dateCreated).toDateString()),
-    ).size;
-
     weeks.push({
       weekStart,
-      weekEnd: weekEnd.toISOString(),
       weekNumber,
+      daysPerWeek: activeGoal.daysPerWeek,
       percentageComplete,
       activeDays,
     });
@@ -103,6 +114,8 @@ const groupedWeeks = computed(() => {
     currentDate.setDate(currentDate.getDate() + activeGoal.daysPerWeek);
     weekNumber++;
   }
+
+  console.log("Weeks : ", weeks);
 
   return weeks;
 });

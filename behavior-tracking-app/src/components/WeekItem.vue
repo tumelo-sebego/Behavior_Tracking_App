@@ -1,19 +1,19 @@
 <template>
-  <div class="week-item" @click="$emit('show-details')">
+  <div class="week-item" @click="$emit('show-details', week)">
     <div class="week-content">
       <div class="status-dot" :class="statusColorClass"></div>
       <div class="week-info">
-        <div class="title">Week {{ weekNumber }}</div>
+        <div class="title">Week {{ week.weekNumber }}</div>
         <div class="active-days">
           <i class="pi pi-bolt"></i>
           <span class="days-text"
-            >Active Days: {{ activeDays }}/{{ daysPerWeek }}</span
+            >Active Days: {{ week.activeDays }}/{{ week.daysPerWeek }}</span
           >
         </div>
       </div>
       <div class="separator"></div>
       <div class="points-container">
-        <span class="points-value">{{ percentageComplete }}%</span>
+        <span class="points-value">{{ week.percentageComplete }}%</span>
       </div>
     </div>
   </div>
@@ -21,71 +21,28 @@
 
 <script setup>
 import { computed } from "vue";
-import { useActivitiesStore } from "@/store/activities";
-import { useGoalSettingsStore } from "@/store/goalSettings";
 
 const props = defineProps({
-  weekStart: {
-    type: String,
+  week: {
+    type: Object,
     required: true,
-  },
-  weekNumber: {
-    type: Number,
-    required: true,
+    validator: (obj) => {
+      return [
+        "weekStart",
+        "weekNumber",
+        "daysPerWeek",
+        "percentageComplete",
+        "activeDays",
+      ].every((prop) => prop in obj);
+    },
   },
 });
 
 defineEmits(["show-details"]);
 
-const store = useActivitiesStore();
-const goalStore = useGoalSettingsStore();
-
-// Get the active goal's daysPerWeek
-const daysPerWeek = computed(() => {
-  const activeGoal = goalStore.getActiveGoal;
-  return activeGoal ? activeGoal.daysPerWeek : 5; // fallback to 5 if no active goal
-});
-
-// Get activities for this week
-const weekActivities = computed(() => {
-  const startDate = new Date(props.weekStart);
-  const endDate = new Date(startDate);
-  endDate.setDate(startDate.getDate() + daysPerWeek.value - 1);
-
-  return store.activities.filter((activity) => {
-    const activityDate = new Date(activity.dateCreated);
-    return activityDate >= startDate && activityDate <= endDate;
-  });
-});
-
-// Calculate active days (days with points > 0)
-const activeDays = computed(() => {
-  const daysWithPoints = new Set();
-  weekActivities.value.forEach((activity) => {
-    if (activity.points > 0) {
-      const date = new Date(activity.dateCreated).toDateString();
-      daysWithPoints.add(date);
-    }
-  });
-  return daysWithPoints.size;
-});
-
-// Calculate total points and percentage
-const totalPoints = computed(() => {
-  return weekActivities.value
-    .filter((activity) => activity.status === "done")
-    .reduce((total, activity) => total + activity.points, 0);
-});
-
-// Update percentage calculation to use daysPerWeek from active goal
-const percentageComplete = computed(() => {
-  const maxPoints = daysPerWeek.value * 100;
-  return Math.round((totalPoints.value / maxPoints) * 100);
-});
-
 // Status color based on percentage complete
 const statusColorClass = computed(() => {
-  const percentage = percentageComplete.value;
+  const percentage = props.week.percentageComplete;
   if (percentage === 0) return "no-points";
   if (percentage <= 25) return "low-points";
   if (percentage <= 50) return "medium-points";

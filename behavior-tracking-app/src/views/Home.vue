@@ -165,7 +165,11 @@ const activeTab = ref("home");
 const date = ref("");
 const activeProgressType = ref("daily");
 const store = useActivitiesStore();
-const latestActivities = computed(() => store.getLatestActivities);
+const latestActivities = computed(() => {
+  console.log("Store activities:", store.activities);
+  console.log("Latest activities:", store.getLatestActivities);
+  return store.getLatestActivities;
+});
 
 const dialogVisible = ref(false);
 const selectedActivityId = ref(null);
@@ -221,13 +225,11 @@ const loginUser = async () => {
 const loadTasks = async () => {
   try {
     const response = await getTasks();
-    if (response.data.message) {
-      // activities.value = [];
-    } else {
-      // activities.value = response.data;
+    if (!response.data.message) {
+      // Update the activities store with the received data
+      //store.setActivities(response.data);
+      console.log("Tasks loaded:", response.data);
     }
-    // Set progress immediately
-    progress.value = 0;
   } catch (error) {
     console.error("Error loading tasks:", error);
   }
