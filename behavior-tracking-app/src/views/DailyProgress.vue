@@ -102,8 +102,8 @@ const groupedActivities = computed(() => {
     return acc;
   }, {});
 
-  // Sort groups by date in descending order (newest first)
-  return Object.values(groups).sort((a, b) => b.date - a.date);
+  // Change sort order to ascending (oldest first)
+  return Object.values(groups).sort((a, b) => a.date - b.date);
 });
 
 function showDayDetails(date) {
